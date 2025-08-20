@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New User</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">Add New User</h2>
+        <form method="POST" action="{{ url_for('add_user_hods') }}" class="space-y-5">
+            <div>
+                <label for="user_type" class="block mb-1 font-semibold">User Type</label>
+                <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="user_type" name="user_type" required>
+                    <option value="dept">Department</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="studentclubs">Student Clubs</option>
+                    <option value="startups">Startups</option>
+                    <option value="login1">Student</option>
+                    <option value="hods">HOD</option>
+                </select>
+            </div>
+            <!-- Import Students from Excel (visible only for Student) -->
+            <div id="import-students-section" class="hidden">
+                <label class="block mb-1 font-semibold">Import Students from Excel</label>
+                <input type="file" id="import-students-file" accept=".xlsx,.xls" class="mb-2" />
+                <button type="button" id="import-students-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">Import Students from Excel</button>
+                <div id="import-students-msg" class="mt-2 text-sm"></div>
+            </div>
+            <div>
+                <label for="user_id" class="block mb-1 font-semibold">User ID</label>
+                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="user_id" name="user_id" required>
+            </div>
+            <div>
+                <label for="password" class="block mb-1 font-semibold">Password</label>
+                <input type="password" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="password" name="password" required>
+            </div>
+            <div id="faculty_fields" class="hidden space-y-5">
+                <div>
+                    <label for="faculty_name" class="block mb-1 font-semibold">Faculty Name</label>
+                    <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="faculty_name" name="faculty_name">
+                </div>
+                <div>
+                    <label for="department" class="block mb-1 font-semibold">Department</label>
+                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="department" name="department">
+                        <option value="AI & DS">AI & DS</option>
+                        <option value="AI & ML">AI & ML</option>
+                        <option value="BS">BS</option>
+                        <option value="CSBS">CSBS</option>
+                        <option value="CSE">CSE</option>
+                        <option value="CE">CE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="IT">IT</option>
+                        <option value="ME">ME</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Add User</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mt-4">
+              {% for category, message in messages %}
+                <div class="p-3 rounded-lg mb-2 text-white {{ 'bg-green-500' if category == 'success' else 'bg-red-500' }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        <a href="{{ url_for('page4_hods') }}" class="block text-center mt-6 text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function () {
+            const facultyFields = document.getElementById('faculty_fields');
+            const facultyName = document.getElementById('faculty_name');
+            const department = document.getElementById('department');
+            const importSection = document.getElementById('import-students-section');
+            if (this.value === 'faculty') {
+                facultyFields.classList.remove('hidden');
+                facultyName.required = true;
+                department.required = true;
+                importSection.classList.add('hidden');
+            } else if (this.value === 'login1') {
+                facultyFields.classList.add('hidden');
+                facultyName.required = false;
+                department.required = false;
+                importSection.classList.remove('hidden');
+            } else {
+                facultyFields.classList.add('hidden');
+                facultyName.required = false;
+                department.required = false;
+                importSection.classList.add('hidden');
+            }
+        });
+
+        // Import Students from Excel logic
+        document.getElementById('import-students-btn').addEventListener('click', async function () {
+            const fileInput = document.getElementById('import-students-file');
+            const msgDiv = document.getElementById('import-students-msg');
+            msgDiv.textContent = '';
+            if (!fileInput.files.length) {
+                msgDiv.textContent = 'Please select an Excel file.';
+                msgDiv.className = 'mt-2 text-sm text-red-600';
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    const header = json[0] || [];
+                    const userIdIdx = header.findIndex(h => h && h.toLowerCase() === 'user_id');
+                    if (userIdIdx === -1) {
+                        msgDiv.textContent = 'Excel must have a user_id column.';
+                        msgDiv.className = 'mt-2 text-sm text-red-600';
+                        return;
+                    }
+                    const userIds = json.slice(1).map(row => row[userIdIdx]).filter(Boolean);
+                    if (!userIds.length) {
+                        msgDiv.textContent = 'No user IDs found in the file.';
+                        msgDiv.className = 'mt-2 text-sm text-red-600';
+                        return;
+                    }
+                    // Send to backend
+                    const resp = await fetch('/import_students', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_ids: userIds })
+                    });
+                    const result = await resp.json();
+                    if (resp.ok && result.success) {
+                        msgDiv.textContent = 'Students imported successfully!';
+                        msgDiv.className = 'mt-2 text-sm text-green-600';
+                    } else {
+                        msgDiv.textContent = result.error || 'Import failed.';
+                        msgDiv.className = 'mt-2 text-sm text-red-600';
+                    }
+                } catch (err) {
+                    msgDiv.textContent = 'Error reading file or importing: ' + err.message;
+                    msgDiv.className = 'mt-2 text-sm text-red-600';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Load XLSX library if not already loaded
+        if (typeof XLSX === 'undefined') {
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html> 

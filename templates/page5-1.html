@@ -1,0 +1,863 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fields</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-white p-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img alt="Institute logo with a detailed description of the logo design" class="mr-4" height="50" src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" width="50"/>
+                <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
+                <h2>Bhimavaram, West Godavari District</h2>
+                <h2>Affiliated to JNTUK</h2>
+                <h2>Accredited by NAAC 'A+'</h2>
+                <h2>Approved by AICTE</h2>
+            </div>
+        </div>
+    </header>
+    <div class="flex flex-1">
+        <div class="w-1/5 bg-blue-600 text-white p-2 space-y-2 overflow-y-auto h-full">
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field1')">Patents Published and Granted</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field2')">Publications (journals)</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field3')">Publications (Conference)</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field4')">Guest lectures/ seminar/workshop attended</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field5')">Awards / achievements / recognisations</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field6')">Visit to various industries</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field7')">Vedic workshops attended</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field8')">Participation in outside competitions</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field9')">Sports participation & winnings</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field10')">Certifications</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field11')">NPTEL/other online courses</button>
+        </div>
+        <div class="w-4/5 p-8">
+            <div id="field1" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Patents Published and Granted</h2>
+                        <form action="/submit_patent" method="POST">
+                            <div class="mb-4">
+                                <label for="Namestudentpatentapplicant" class="block text-black-700 font-medium mb-2">Name of the Applicant</label>
+                                <input type="text" id="Applicant" name="Applicant" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4 inventor">
+                                <label for="studentpatentinventorName" class="block text-black-700 font-medium mb-2">Name of the Inventors with Register Number</label>
+                                <textarea id="studentpatentinventorName" rows="3" name="studentpatentinventorName" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="department" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="department" name="department" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="Studentpatenttitle" class="block text-black-700 font-medium mb-2">Title of the Patent</label>
+                                <input type="text" id="Studentpatenttitle" name="Studentpatenttitle" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentpatentnumber" class="block text-black-700 font-medium mb-2">Patent / Application Number</label>
+                                <input type="text" id="studentpatentnumber" name="studentpatentnumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="sfpg" class="block text-black-700 font-medium mb-2">Filed/Published/Granted</label>
+                                <div id="sfpg" class="flex flex-wrap gap-4">
+                                    <div class="flex items-center p-2 bg-blue-100 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                                        <input id="Filed" name="sfpg" type="checkbox" value="Filed" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                        <label for="Filed" class="ml-2 block text-sm text-gray-900">Filed</label>
+                                    </div>
+                                    <div class="flex items-center p-2 bg-blue-100 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                                        <input id="Published" name="sfpg" type="checkbox" value="Published" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                        <label for="Published" class="ml-2 block text-sm text-gray-900">Published</label>
+                                    </div>
+                                    <div class="flex items-center p-2 bg-blue-100 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                                        <input id="Granted" name="sfpg" type="checkbox" value="Granted" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                        <label for="Granted" class="ml-2 block text-sm text-gray-900">Granted</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentpatentfileddate" class="block text-black-700 font-medium mb-2">Filed Date</label>
+                                <input type="date" id="studentpatentfileddate" name="studentpatentfileddate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentpatentpublisheddate" class="block text-black-700 font-medium mb-2">Published Date</label>
+                                <input type="date" id="studentpatentpublisheddate" name="studentpatentpublisheddate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentpatentgranteddate" class="block text-black-700 font-medium mb-2">Granted Date</label>
+                                <input type="date" id="studentpatentgranteddate" name="studentpatentgranteddate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field2" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Publications (journals)</h2>
+                        <form action="/submit_publication_journals" method="POST">
+                            <div class="mb-4">
+                                <label for="journalstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="journalstudentname" name="journalstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="journalstudentRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="journalstudentRegistratioNumber" name="journalstudentRegistratioNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="departmenT" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="departmenT" name="departmenT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="sjsswsg" class="block text-black-700 font-medium mb-2">SCIE/SCI/WOS/Scopus/Google Scholar</label>
+                                <select id="sjsswsg" name="sjsswsg" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="SCIE">SCIE</option>
+                                    <option value="SCI">SCI</option>
+                                    <option value="WOS">WOS</option>
+                                    <option value="Scopus">Scopus</option>
+                                    <option value="Google Scholar">Google Scholar</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalsAuthorsDesignation" class="block text-black-700 font-medium mb-2">Name of the Authors with Designations</label>
+                                <textarea id="studentjournalsAuthorsDesignation" rows="4" name="studentjournalsAuthorsDesignation" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalname" class="block text-black-700 font-medium mb-2">Name of the journal</label>
+                                <input type="text" id="studentjournalname" name="studentjournalname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalpapertitle" class="block text-black-700 font-medium mb-2">Title of the paper</label>
+                                <input type="text" id="studentjournalpapertitle" name="studentjournalpapertitle" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalissn" class="block text-black-700 font-medium mb-2">ISSN</label>
+                                <input type="text" id="studentjournalissn" name="studentjournalissn" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalQuartileRanking" class="block text-black-700 font-medium mb-2">Quartile Ranking</label>
+                                <input type="text" id="studentjournalQuartileRanking" name="studentjournalQuartileRanking" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournaldoi" class="block text-black-700 font-medium mb-2">DOI</label>
+                                <input type="text" id="studentjournaldoi" name="studentjournaldoi" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalvolume" class="block text-black-700 font-medium mb-2">Volume</label>
+                                <input type="number" id="studentjournalvolume" name="studentjournalvolume" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalpage" class="block text-black-700 font-medium mb-2">page</label>
+                                <input type="text" id="studentjournalpage" name="studentjournalpage" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentjournalmonthandyear" class="block text-black-700 font-medium mb-2">Month & Year</label>
+                                <input type="month" id="studentjournalmonthandyear" name="studentjournalmonthandyear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field3" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Publications (Conference)</h2>
+                        <form action="/submit_publications_conference" method="POST">
+                            <div class="mb-4">
+                                <label for="conferencestudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="conferencestudentname" name="conferencestudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="conferencestudentRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="conferencestudentRegistratioNumber" name="conferencestudentRegistratioNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="departmeNt" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="departmeNt" name="departmeNt" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="scsswsg" class="block text-black-700 font-medium mb-2">SCIE/SCI/WOS/Scopus/Google Scholar</label>
+                                <select id="scsswsg" name="scsswsg" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="SCIE">SCIE</option>
+                                    <option value="SCI">SCI</option>
+                                    <option value="WOS">WOS</option>
+                                    <option value="Scopus">Scopus</option>
+                                    <option value="Google Scholar">Google Scholar</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferenceauthorsdesignation" class="block text-black-700 font-medium mb-2">Name of the Authors with Designations</label>
+                                <textarea id="studentconferenceauthorsdesignation" rows="4" name="studentconferenceauthorsdesignation" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferencename" class="block text-black-700 font-medium mb-2">Name of the Conference</label>
+                                <input type="text" id="studentconferencename" name="studentconferencename" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferencepapertitle" class="block text-black-700 font-medium mb-2">Title of the paper</label>
+                                <input type="text" id="studentconferencepapertitle" name="studentconferencepapertitle" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferenceissn" class="block text-black-700 font-medium mb-2">ISSN</label>
+                                <input type="text" id="studentconferenceissn" name="studentconferenceissn" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferencedoi" class="block text-black-700 font-medium mb-2">DOI</label>
+                                <input type="text" id="studentconferencedoi" name="studentconferencedoi" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferencevolume" class="block text-black-700 font-medium mb-2">Volume</label>
+                                <input type="number" id="studentconferencevolume" name="studentconferencevolume" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferencepage" class="block text-black-700 font-medium mb-2">page</label>
+                                <input type="text" id="studentconferencepage" name="studentconferencepage" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentconferencemonthandyear" class="block text-black-700 font-medium mb-2">Month & Year</label>
+                                <input type="month" id="studentconferencemonthandyear" name="studentconferencemonthandyear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field4" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Workshop/Seminar/Guest lecturers attended by the Student</h2>
+                        <form action="/submit_workshop" method="POST">
+                            <div class="mb-4">
+                                <label for="workshopattendedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="workshopattendedstudentname" name="workshopattendedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="workshopattendedRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="workshopattendedRegistratioNumber" name="workshopattendedRegistratioNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="departmEnt" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="departmEnt" name="departmEnt" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedworkshopname" class="block text-black-700 font-medium mb-2">Name of the Event</label>
+                                <input type="text" id="studentattendedworkshopname" name="studentattendedworkshopname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedworkshopNIn" class="block text-black-700 font-medium mb-2">National / International</label>
+                                <select id="studentattendedworkshopNIn" name="studentattendedworkshopNIn" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="national">National</option>
+                                    <option value="international">International</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedwgstype" class="block text-black-700 font-medium mb-2">Workshop / Guest lecture / Seminar</label>
+                                <select id="studentattendedwgstype" name="studentattendedwgstype" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="Workshop">Workshop</option>
+                                    <option value="Guest Lecture">Guest Lecture</option>
+                                    <option value="Seminar">Seminar</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedWSDate" class="block text-black-700 font-medium mb-2">Date</label>
+                                <input type="date" id="studentattendedWSDate" name="studentattendedWSDate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedwsorganisedby" class="block text-black-700 font-medium mb-2">Organised by</label>
+                                <input type="text" id="studentattendedwsorganisedby" name="studentattendedwsorganisedby" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field5" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Student Achievements, awards and Recognitions</h2>
+                        <form action="/submit_achievement" method="POST">
+                            <div class="mb-4">
+                                <label for="acheivementawardedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="acheivementawardedstudentname" name="acheivementawardedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="acheivementawardedstudentRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="acheivementawardedstudentRegistratioNumber" name="acheivementawardedstudentRegistratioNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="DepartMent" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="DepartMent" name="DepartMent" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentacheivementname" class="block text-black-700 font-medium mb-2">Name of Achievement/ award/ Recognitions</label>
+                                <input type="text" id="studentacheivementname" name="studentacheivementname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentacheivementAwardedby" class="block text-black-700 font-medium mb-2">Awarded by</label>
+                                <input type="text" id="studentacheivementAwardedby" name="studentacheivementAwardedby" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentacheivementmonthandyear" class="block text-black-700 font-medium mb-2">Month & Year</label>
+                                <input type="month" id="studentacheivementmonthandyear" name="studentacheivementmonthandyear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field6" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Industries Visited by Student</h2>
+                        <form action="/submit_industry_visit" method="POST">
+                            <div class="mb-4">
+                                <label for="industryvisitedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="industryvisitedstudentname" name="industryvisitedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="industryvisitedstudentRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="industryvisitedstudentRegistratioNumber" name="industryvisitedstudentRegistratioNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="deparTment" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="deparTment" name="deparTment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentvisitedindustryname" class="block text-black-700 font-medium mb-2">Name of the Industry</label>
+                                <input type="text" id="studentvisitedindustryname" name="studentvisitedindustryname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentvisitedindustryDate" class="block text-black-700 font-medium mb-2">Date of Visit</label>
+                                <input type="date" id="studentvisitedindustryDate" name="studentvisitedindustryDate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentvisitedindustrySignificance" class="block text-black-700 font-medium mb-2">Significance</label>
+                                <textarea id="studentvisitedindustrySignificance" rows="4" name="studentvisitedindustrySignificance" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentvisitedindustrylocation" class="block text-black-700 font-medium mb-2">Location</label>
+                                <input type="text" id="studentvisitedindustrylocation" name="studentvisitedindustrylocation" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field7" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">VEDIC (Both Hyderabad and Bangalore) Workshops attended by the Student</h2>
+                        <form action="/submit_vedic_workshop" method="POST">
+                            <div class="mb-4">
+                                <label for="vedicattendedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="vedicattendedstudentname" name="vedicattendedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="vedicattendedstudentRegistrationNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="vedicattendedstudentRegistrationNumber" name="vedicattendedstudentRegistrationNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="depaRtment" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="depaRtment" name="depaRtment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedvedicworkshopname" class="block text-black-700 font-medium mb-2">Name of the Workshop</label>
+                                <input type="text" id="studentattendedvedicworkshopname" name="studentattendedvedicworkshopname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedvedicworkshopdate" class="block text-black-700 font-medium mb-2">Date of Event</label>
+                                <input type="date" id="studentattendedvedicworkshopdate" name="studentattendedvedicworkshopdate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedvedicvenue" class="block text-black-700 font-medium mb-2">Venue</label>
+                                <input type="text" id="studentattendedvedicvenue" name="studentattendedvedicvenue" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field8" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Participation in outside competitions</h2>
+                        <form action="/submit_outside_competition" method="POST">
+                            <div class="mb-4">
+                                <label for="outsideparicipatedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="outsideparicipatedstudentname" name="outsideparicipatedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="outsideparicipatedstudentRegistrationNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="outsideparicipatedstudentRegistrationNumber" name="outsideparicipatedstudentRegistrationNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="depArtmeNt" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="depArtmeNt" name="depArtmeNt" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedNameoftheWSP" class="block text-black-700 font-medium mb-2">Name of the Workshop/Paper/Poster/Project Expo etc…</label>
+                                <input type="text" id="studentattendedNameoftheWSP" name="studentattendedNameoftheWSP" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedparticipationOrganisedbY" class="block text-black-700 font-medium mb-2">Organised by</label>
+                                <input type="text" id="studentattendedparticipationOrganisedbY" name="studentattendedparticipationOrganisedbY" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedparticipationduration" class="block text-black-700 font-medium mb-2">Duration</label>
+                                <input type="text" id="studentattendedparticipationduration" name="studentattendedparticipationduration" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentattendedparticipationNaIn" class="block text-black-700 font-medium mb-2">National / International</label>
+                                <select id="studentattendedparticipationNaIn" name="studentattendedparticipationNaIn" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="national">National</option>
+                                    <option value="international">International</option>
+                                </select>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field9" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Sports participation & winnings</h2>
+                        <form action="/submit_sports_participation" method="POST">
+                            <div class="mb-4">
+                                <label for="sportparticipatedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="sportparticipatedstudentname" name="sportparticipatedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="sportparticipatedstudentRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="sportparticipatedstudentRegistratioNumber" name="sportparticipatedstudentRegistratioNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="dePartment" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="dePartment" name="dePartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="sportparticipatedstudentyear" class="block text-black-700 font-medium mb-2">Year</label>
+                                <select id="sportparticipatedstudentyear" name="sportparticipatedstudentyear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="NameoftheGameparticipated" class="block text-black-700 font-medium mb-2">Name of the Game</label>
+                                <input type="text" id="NameoftheGameparticipated" name="NameoftheGameparticipated" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="participatedGameDetails" class="block text-black-700 font-medium mb-2">Details of Game (Zonal, District/National etc…)</label>
+                                <input type="text" id="participatedGameDetails" name="participatedGameDetails" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="participatedgameOrganisedBY" class="block text-black-700 font-medium mb-2">Organised by</label>
+                                <input type="text" id="participatedgameOrganisedBY" name="participatedgameOrganisedBY" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="participatedgamevenue" class="block text-black-700 font-medium mb-2">Venue</label>
+                                <input type="text" id="participatedgamevenue" name="participatedgamevenue" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="gameeventstartingdate" class="block text-black-700 font-medium mb-2">Starting Date of the Event</label>
+                                <input type="date" id="gameeventstartingdate" name="gameeventstartingdate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="gameeventendingdate" class="block text-black-700 font-medium mb-2">Ending Date of the Event</label>
+                                <input type="date" id="gameeventendingdate" name="gameeventendingdate" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="gameSecuredPosition" class="block text-black-700 font-medium mb-2">Secured Position</label>
+                                <input type="text" id="gameSecuredPosition" name="gameSecuredPosition" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="gameNaIna" class="block text-black-700 font-medium mb-2">National / International</label>
+                                <select id="gameNaIna" name="gameNaIna" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="national">National</option>
+                                    <option value="international">International</option>
+                                </select>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field10" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Certifications</h2>
+                        <form action="/submit_certifications" method="POST" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="certificatedstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="certificatedstudentname" name="certificatedstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="certificatedstudentRegistrationNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="certificatedstudentRegistrationNumber" name="certificatedstudentRegistrationNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="dEpartment" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="dEpartment" name="dEpartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcertificatedCourseTitle" class="block text-black-700 font-medium mb-2">Title of the Course</label>
+                                <input type="text" id="studentcertificatedCourseTitle" name="studentcertificatedCourseTitle" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcertificatedCourseduration" class="block text-black-700 font-medium mb-2">Duration</label>
+                                <input type="text" id="studentcertificatedCourseduration" name="studentcertificatedCourseduration" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcertificatedCourseTopic" class="block text-black-700 font-medium mb-2">Topic of the course</label>
+                                <input type="text" id="studentcertificatedCourseTopic" name="studentcertificatedCourseTopic" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcertifiatedcoursedetails" class="block text-black-700 font-medium mb-2">Details</label>
+                                <textarea id="studentcertifiatedcoursedetails" rows="4" name="studentcertifiatedcoursedetails" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcertificationsUpload" class="block text-black-700 font-medium mb-2">Certificate</label>
+                                <input type="file" id="studentcertificationsUpload" name="studentcertificationsUpload" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="field11" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-black-700">NPTEL / Other online courses done by the Student</h2>
+                        <form action="/submit_nptel_courses" method="POST" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="nptelstudentname" class="block text-black-700 font-medium mb-2">Name of the Student</label>
+                                <input type="text" id="nptelstudentname" name="nptelstudentname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="nptelstudentRegistratioNumber" class="block text-black-700 font-medium mb-2">Registration Number</label>
+                                <input type="text" id="nptelstudentRegistratioNumber" name="nptelstudentRegistrationNumber" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="Department" class="block text-black-700 font-medium mb-2">Department</label>
+                                <select id="Department" name="Department" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="nptelstudentCourseTitle" class="block text-black-700 font-medium mb-2">Title of the Course</label>
+                                <input type="text" id="nptelstudentCourseTitle" name="nptelstudentCourseTitle" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="nptelstudentCourseduration" class="block text-black-700 font-medium mb-2">Duration</label>
+                                <input type="text" id="nptelstudentCourseduration" name="nptelstudentCourseduration" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="nptelstudentcourseid" class="block text-black-700 font-medium mb-2">Course ID (if NPTEL), otherwise type 'None'.</label>
+                                <input type="text" id="nptelstudentcourseid" name="nptelstudentcourseid" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="nptelstudentScore" class="block text-black-700 font-medium mb-2">Score</label>
+                                <input type="text" id="nptelstudentScore" name="nptelstudentScore" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcourseplatform" class="block text-black-700 font-medium mb-2">Course platform / Website</label>
+                                <input type="text" id="studentcourseplatform" name="studentcourseplatform" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentcoursedeTails" class="block text-black-700 font-medium mb-2">Details</label>
+                                <textarea id="studentcoursedeTails" rows="4" name="studentcoursedeTails" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="studentsnptelUpload" class="block text-black-700 font-medium mb-2">Certificate</label>
+                                <input type="file" id="studentsnptelUpload" name="studentsnptelUpload" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showContent(fieldId) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('visible');
+            });
+            const selectedContent = document.getElementById(fieldId);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('visible');
+        }
+    </script>
+</body>
+</html>
