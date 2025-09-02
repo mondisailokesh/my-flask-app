@@ -13,9 +13,9 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'lucky',
+    'host': 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+    'user': '2tJ2hbMoj1vsu2d.root',
+    'password': 'sYvHNm8s96kZnXQN',
     'database': 'newproject',
 }
 
