@@ -4398,41 +4398,25 @@ def add_user_hods():
         if not table:
             flash('Invalid user type selected.', 'danger')
             return redirect(url_for('add_user_hods'))
-        
+
         conn = None
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-            
-            query = f"INSERT INTO {table} (user_id, password) VALUES (%s, %s)"
-            cursor.execute(query, (user_id, password))
-            
+
             if user_type == 'faculty':
                 faculty_name = request.form.get('faculty_name')
                 department = request.form.get('department')
-                
-                # Debugging: Print the received values
-                print(f"Received Faculty Name: {faculty_name}")
-                print(f"Received Department: {department}")
-
                 if not faculty_name or not department:
                     flash('Faculty Name and Department are required for faculty users.', 'danger')
                     return redirect(url_for('add_user_hods'))
-                
-                # This statement creates the table correctly with a foreign key.
-                # It relies on the faculty table having a PRIMARY KEY on user_id.
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS faculty_details (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        user_id VARCHAR(255) NOT NULL UNIQUE,
-                        faculty_name VARCHAR(255) NOT NULL,
-                        department VARCHAR(255) NOT NULL,
-                        FOREIGN KEY (user_id) REFERENCES faculty(user_id) ON DELETE CASCADE
-                    )
-                """)
-
-                details_query = "INSERT INTO faculty_details (user_id, faculty_name, department) VALUES (%s, %s, %s)"
-                cursor.execute(details_query, (user_id, faculty_name, department))
+                # Insert into faculty first
+                cursor.execute("INSERT INTO faculty (user_id, password) VALUES (%s, %s)", (user_id, password))
+                # Then insert into faculty_details
+                cursor.execute("INSERT INTO faculty_details (user_id, faculty_name, department) VALUES (%s, %s, %s)", (user_id, faculty_name, department))
+            else:
+                # For other user types
+                cursor.execute(f"INSERT INTO {table} (user_id, password) VALUES (%s, %s)", (user_id, password))
 
             conn.commit()
             flash('User added successfully!', 'success')
@@ -4440,9 +4424,9 @@ def add_user_hods():
             if conn:
                 conn.rollback()
             if e.errno == 1062:
-                 flash(f'Error: User ID "{user_id}" already exists.', 'danger')
+                flash(f'Error: User ID "{user_id}" already exists.', 'danger')
             else:
-                 flash(f'Error adding user: {str(e)}', 'danger')
+                flash(f'Error adding user: {str(e)}', 'danger')
         except Exception as e:
             if conn:
                 conn.rollback()
