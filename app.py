@@ -1898,10 +1898,9 @@ def get_faculty_nptel_courses():
 def submit_faculty_patent():
     if request.method == 'POST':
         # Extract form data
-        applicant_name = request.form['Namefacultypatentapplicant']
         inventors = request.form['facultypatentapplicant']
         department = request.form['DEPARTMENT']
-        faculty_name = request.form.get('faculty_name')
+        applicant_name = request.form.get('faculty_name_3')  # dropdown only
         patent_title = request.form['facultypatenttitle']
         patent_number = request.form['facultypatentnumber']
         status = ', '.join(request.form.getlist('ffpg'))  # Combine checkbox values
@@ -1917,9 +1916,9 @@ def submit_faculty_patent():
         try:
             # Insert data into the database
             cursor.execute('''
-                INSERT INTO faculty_patents (applicant_name, inventors, department, faculty_name, patent_title, patent_number, status, filed_date, published_date, granted_date)
+                INSERT INTO faculty_patents (applicant_name, inventors, department, patent_title, patent_number, status, filed_date, published_date, granted_date)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ''', (applicant_name, inventors, department, faculty_name, patent_title, patent_number, status, filed_date, published_date, granted_date))
+            ''', (applicant_name, inventors, department, patent_title, patent_number, status, filed_date, published_date, granted_date))
             conn.commit()
             print('Patent data submitted successfully!', 'success')
         except Exception as e:
@@ -1934,9 +1933,8 @@ def submit_faculty_patent():
 def submit_research_grant():
     if request.method == 'POST':
         # Extract form data
-        faculty_name = request.form['researchgrantfacultyname']
+        faculty_name = request.form.get('faculty_name_2')  # dropdown only
         department = request.form['DEPARTMENt']
-        faculty_name_dropdown = request.form.get('faculty_name_2')
         project_id = request.form['ProjectID']
         project_title = request.form['Projecttitle']
         funding_agency = request.form['researchagency']
@@ -1952,11 +1950,11 @@ def submit_research_grant():
             # Insert data into the database
             cursor.execute('''
                 INSERT INTO research_grants (
-                    faculty_name, department, faculty_name_dropdown, project_id, project_title, funding_agency,
+                    faculty_name, department, project_id, project_title, funding_agency,
                     principle_investigator, co_pi, project_duration, total_grant_sanctioned
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
-                faculty_name, department, faculty_name_dropdown, project_id, project_title, funding_agency,
+                faculty_name, department, project_id, project_title, funding_agency,
                 principle_investigator, co_pi, project_duration, total_grant_sanctioned
             ))
             conn.commit()
@@ -1976,7 +1974,7 @@ def submit_consultancy():
         try:
             consultancy_name = request.form['Consultancyname']
             department = request.form['DEPARTMEnT']
-            faculty_name_dropdown = request.form.get('faculty_name_3')
+            faculty_name = request.form.get('faculty_name_3')  # dropdown only
             funding_agency = request.form['consultancyagency']
             faculty_names = request.form['consultancyfaculty']
             duration = request.form['consultancyduration']
@@ -1992,10 +1990,10 @@ def submit_consultancy():
             # Insert data into the database
             cursor.execute('''
                 INSERT INTO consultancy (
-                    consultancy_name, department, faculty_name_dropdown, funding_agency, faculty_names, duration, amount_granted
+                    consultancy_name, department, faculty_name, funding_agency, faculty_names, duration, amount_granted
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s)
             ''', (
-                consultancy_name, department, faculty_name_dropdown, funding_agency, faculty_names, duration, amount_granted
+                consultancy_name, department, faculty_name, funding_agency, faculty_names, duration, amount_granted
             ))
             conn.commit()
             flash('Consultancy data submitted successfully!', 'success')
@@ -2012,9 +2010,8 @@ def submit_faculty_journals():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['journalfacultyname']
+            faculty_name = request.form.get('faculty_name_4')  # dropdown only
             department = request.form['DEPARTMeNT']
-            faculty_name_dropdown = request.form.get('faculty_name_4')
             journal_type = request.form['fjSSWS']
             authors_designations = request.form['facultyjournalAuthorsDesign']
             journal_name = request.form['facultyjournalname']
@@ -2036,11 +2033,11 @@ def submit_faculty_journals():
             # Insert data into the database
             cursor.execute('''
                 INSERT INTO faculty_journals (
-                    faculty_name, department, faculty_name_dropdown, journal_type, authors_designations, journal_name,
+                    faculty_name, department, journal_type, authors_designations, journal_name,
                     paper_title, issn, quartile_ranking, doi, volume, page, month_and_year
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
-                faculty_name, department, faculty_name_dropdown, journal_type, authors_designations, journal_name,
+                faculty_name, department, journal_type, authors_designations, journal_name,
                 paper_title, issn, quartile_ranking, doi, volume, page, month_and_year
             ))
             conn.commit()
@@ -2058,9 +2055,8 @@ def submit_faculty_conference():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['conferencefacultyname']
+            faculty_name = request.form.get('faculty_name_5')  # dropdown only
             department = request.form['DEPARTmENT']
-            faculty_name_dropdown = request.form.get('faculty_name_5')
             conference_type = request.form['fcssws']
             authors_designations = request.form['facultyconferenceAuthorsDsgn']
             conference_name = request.form['facultyconferencename']
@@ -2081,11 +2077,11 @@ def submit_faculty_conference():
             # Insert data into the database
             cursor.execute('''
                 INSERT INTO faculty_conferences (
-                    faculty_name, department, faculty_name_dropdown, conference_type, authors_designations, conference_name,
+                    faculty_name, department, conference_type, authors_designations, conference_name,
                     paper_title, issn, doi, volume, page, month_and_year
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
-                faculty_name, department, faculty_name_dropdown, conference_type, authors_designations, conference_name,
+                faculty_name, department, conference_type, authors_designations, conference_name,
                 paper_title, issn, doi, volume, page, month_and_year
             ))
             conn.commit()
@@ -2103,7 +2099,7 @@ def submit_faculty_acted_resourceperson():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['resourcepersonfacultyname']
+            faculty_name = request.form['faculty_name_6']
             department = request.form['DEPARtMENT']
             date_of_activity = request.form['Dateoffacultyresourceactivity']
             college_name = request.form['facultyresourcecollege']
@@ -2140,7 +2136,7 @@ def submit_book_publications():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['bookpublishedfacultyname']
+            faculty_name = request.form['faculty_name_7']
             designation = request.form['bookpublishedfacultydesignation']
             department = request.form['DEPArTMENT']
             book_type = request.form['fbssws']
@@ -2182,7 +2178,7 @@ def submit_faculty_industry_visits():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['industryvisitedfacultyname']
+            faculty_name = request.form['faculty_name_8']
             department = request.form['DEPaRTMENT']
             industry_name = request.form['nameofindustryfacultyvisited']
             visit_date = request.form['facultyindustryVistedDate']
@@ -2219,7 +2215,7 @@ def submit_faculty_hrd_fdp_sdp():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['HRDattendefacultyname']
+            faculty_name = request.form['faculty_name_9']
             department = request.form['DEpARTMENT']
             program_name = request.form['facultyattendedhrdname']
             program_type = request.form['facultyhrdattendedtype']
@@ -2261,7 +2257,7 @@ def submit_faculty_ws_sem_gs():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['wsattendedfacultyname']
+            faculty_name = request.form['faculty_name_10']
             department = request.form['DePARTMENT']
             event_name = request.form['facultyattendedwsname']
             national_international = request.form['facultyattendedwsNIn']
@@ -2302,7 +2298,7 @@ def submit_faculty_achievements():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['acheivementsawardedfacultyname']
+            faculty_name = request.form['faculty_name_11']
             department = request.form['dEPARTMENT']
             achievement_name = request.form['facultyAcheivementname']
             awarded_by = request.form['facultyacheivemntAwardedby']
@@ -2338,7 +2334,7 @@ def submit_faculty_vedic():
     if request.method == 'POST':
         # Extract form data
         try:
-            faculty_name = request.form['facultyattendedvedicname']
+            faculty_name = request.form.get('faculty_name_12')  # dropdown only
             department = request.form['DEPT']
             workshop_name = request.form['facultyattendedvedicworkshopname']
             event_date = request.form['facultyattendedvedicwsname']
@@ -2414,7 +2410,7 @@ def submit_conference_journal_reviewer():
     if request.method == 'POST':
         try:
             # Extract form data
-            faculty_name = request.form['reviewerFacultyNAME']
+            faculty_name = request.form.get('faculty_name_14')  # dropdown only
             department = request.form['DEpT']
             date_of_review = request.form['Dateofattenedasreviewer']
             conference_journal_name = request.form['reviewattendedCollegename']
@@ -2449,7 +2445,7 @@ def submit_conference_journal_reviewer():
 def submit_faculty_certifications():
     if request.method == 'POST':
         # Extract form data
-        faculty_name = request.form['certificatedfacultyname']
+        faculty_name = request.form.get('faculty_name_15')  # dropdown only
         department = request.form['DePT']
         course_title = request.form['facultycertificatedCourseTitle']
         course_duration = request.form['facultycertificatedcourseduration']
@@ -2461,7 +2457,6 @@ def submit_faculty_certifications():
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            
         print(f"Received: {faculty_name}, {department}, {course_title}, {course_duration}, {course_topic}, {course_details}, {file_path}")
         # Get a database connection from the pool
         conn = get_db_connection()
@@ -2486,14 +2481,13 @@ def submit_faculty_certifications():
         finally:
             cursor.close()
             conn.close()
-
     return redirect(url_for('page4_faculty'))
     
 @app.route('/submit_faculty_nptel', methods=['POST'])
 def submit_faculty_nptel():
     if request.method == 'POST':
         # Extract form data
-        faculty_name = request.form['nptelfacultyname']
+        faculty_name = request.form['faculty_name_16']
         department = request.form['dEPT']
         course_title = request.form['facultynptelCourseTitle']
         course_duration = request.form['facultynptelcourseduration']
