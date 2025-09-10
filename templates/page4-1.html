@@ -57,8 +57,7 @@
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Patents Published and Granted By Faculty</h2>
                         <form action="/submit_faculty_patents" method="post">
                             <div class="mb-4">
-                                <label for="Namefacultypatentapplicant" class="block text-black-700 font-medium mb-2">Name of the Applicant</label>
-                                <input type="text" id="Namefacultypatentapplicant" name="Namefacultypatentapplicant" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <!-- Removed text input for Faculty Name, use dropdown only -->
                             </div>
                             <div class="mb-4">
                                 <label for="facultypatentapplicant" class="block text-black-700 font-medium mb-2">Name of the Inventors with Designation</label>
@@ -81,8 +80,8 @@
                                 </select>
                             </div>
                             <div class="mb-4">
-                                <label for="faculty_name" class="block text-black-700 font-medium mb-2">Faculty Name</label>
-                                <select id="faculty_name" name="faculty_name" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required disabled>
+                                <label for="Namefacultypatentapplicant" class="block text-black-700 font-medium mb-2">Faculty Name</label>
+                                <select id="faculty_name_3" name="faculty_name_3" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required disabled>
                                     <option value="">Select Faculty Name</option>
                                 </select>
                             </div>
@@ -135,10 +134,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Research Grants / Status</h2>
                         <form action="/submit_research_grant" method="post">
-                            <div class="mb-4">
-                                <label for="researchgrantfacultyname" class="block text-black-700 font-medium mb-2">Faculty Name</label>
-                                <input type="text" id="researchgrantfacultyname" name="researchgrantfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEPARTMENt" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEPARTMENt" name="DEPARTMENt" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -156,7 +152,7 @@
                                 </select>
                             </div>
                             <div class="mb-4">
-                                <label for="faculty_name_2" class="block text-black-700 font-medium mb-2">Faculty Name</label>
+                                <label for="researchgrantfacultyname" class="block text-black-700 font-medium mb-2">Faculty Name</label>
                                 <select id="faculty_name_2" name="faculty_name_2" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required disabled>
                                     <option value="">Select Faculty Name</option>
                                 </select>
@@ -255,10 +251,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Publications (journals) by Faculty</h2>
                         <form action="/submit_faculty_journals" method="post">
-                            <div class="mb-4">
-                                <label for="journalfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="journalfacultyname" name="journalfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEPARTMeNT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEPARTMeNT" name="DEPARTMeNT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -338,10 +331,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Publications (Conference) by Faculty</h2>
                         <form action="/submit_faculty_conference" method="post">
-                            <div class="mb-4">
-                                <label for="conferencefacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="conferencefacultyname" name="conferencefacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEPARTmENT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEPARTmENT" name="DEPARTmENT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -417,10 +407,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Faculty Acted as a Resourceperson</h2>
                         <form action="/submit_faculty_acted_resourveperson" method="post">
-                            <div class="mb-4">
-                                <label for="resourcepersonfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="resourcepersonfacultyname" name="resourcepersonfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEPARtMENT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEPARtMENT" name="DEPARtMENT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -476,10 +463,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Books Published by the Faculty</h2>
                         <form action="/submit_book_publications" method="post">
-                            <div class="mb-4">
-                                <label for="bookpublishedfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="bookpublishedfacultyname" name="bookpublishedfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="bookpublishedfacultydesignation" class="block text-black-700 font-medium mb-2">Designation</label>
                                 <input type="text" id="bookpublishedfacultydesignation" name="bookpublishedfacultydesignation" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -553,10 +537,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Industries Visited by Faculty</h2>
                         <form action="/submit_faculty_industry_visits" method="post">
-                            <div class="mb-4">
-                                <label for="industryvisitedfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="industryvisitedfacultyname" name="industryvisitedfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEPaRTMENT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEPaRTMENT" name="DEPaRTMENT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -607,10 +588,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">HRDs/FDPs/SDPs/Refresher Course attended by the Faculty</h2>
                         <form action="/submit_faculty_hrd_fdp_sdp" method="post">
-                            <div class="mb-4">
-                                <label for="HRDattendefacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="HRDattendefacultyname" name="HRDattendefacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEpARTMENT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEpARTMENT" name="DEpARTMENT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -685,10 +663,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Workshop/Seminar/Guest lecturers attended by the faculty</h2>
                         <form action="/submit_faculty_ws_sem_gs" method="post">
-                            <div class="mb-4">
-                                <label for="wsattendedfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="wsattendedfacultyname" name="wsattendedfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DePARTMENT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DePARTMENT" name="DePARTMENT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -754,10 +729,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Faculty Achievements, awards and Recognitions</h2>
                         <form action="/submit_faculty_acheivements" method="post">
-                            <div class="mb-4">
-                                <label for="acheivementsawardedfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="acheivementsawardedfacultyname" name="acheivementsawardedfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="dEPARTMENT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="dEPARTMENT" name="dEPARTMENT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -804,10 +776,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">VEDIC (Both Hyderabad and Bangalore) Workshops attended by the faculty</h2>
                         <form action="/submit_faculty_vedic" method="post">
-                            <div class="mb-4">
-                                <label for="facultyattendedvedicname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="facultyattendedvedicname" name="facultyattendedvedicname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEPT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DePT" name="DePT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -879,12 +848,6 @@
                                 </select>
                             </div>
                             <div class="mb-4">
-                                <label for="faculty_name_13" class="block text-black-700 font-medium mb-2">Faculty Name</label>
-                                <select id="faculty_name_13" name="faculty_name_13" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required disabled>
-                                    <option value="">Select Faculty Name</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
                                 <label for="phdscholarUniversityName" class="block text-black-700 font-medium mb-2">University</label>
                                 <input type="text" id="phdscholarUniversityName" name="phdscholarUniversityName" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
@@ -915,10 +878,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Conference or Journals Reviewer</h2>
                         <form action="/submit_conference_journal_reviewer" method="post">
-                            <div class="mb-4">
-                                <label for="reviewerFacultyNAME" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="reviewerFacultyNAME" name="reviewerFacultyNAME" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DEpT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DEpT" name="DEpT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -972,10 +932,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">Certifications</h2>
                         <form action="/submit_faculty_certifications" method="post" enctype="multipart/form-data">
-                            <div class="mb-4">
-                                <label for="certificatedfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="certificatedfacultyname" name="certificatedfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="DePT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="DePT" name="DePT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -1030,10 +987,7 @@
                     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-bold mb-6 text-center text-black-700">NPTEL / Other online courses done by the Faculty</h2>
                         <form action="/submit_faculty_nptel" method="post" enctype="multipart/form-data">
-                            <div class="mb-4">
-                                <label for="nptelfacultyname" class="block text-black-700 font-medium mb-2">Name of the Faculty</label>
-                                <input type="text" id="nptelfacultyname" name="nptelfacultyname" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                            <!-- Removed text input for Faculty Name, use dropdown only -->
                             <div class="mb-4">
                                 <label for="dEPT" class="block text-black-700 font-medium mb-2">Department</label>
                                 <select id="dEPT" name="dEPT" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -1109,7 +1063,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Add change event listeners to all department dropdowns
             document.addEventListener('change', function(e) {
-                if (e.target.id && (e.target.id.includes('DEPARTMENT') || e.target.id.includes('DEPARTMENt') || e.target.id.includes('DEPARTMEnT') || e.target.id.includes('DEPARtMENT') || e.target.id.includes('DEPaRTMENT') || e.target.id.includes('DEpARTMENT') || e.target.id.includes('DePARTMENT') || e.target.id.includes('dEPARTMENT') || e.target.id.includes('DEPt') || e.target.id.includes('DEpT') || e.target.id.includes('DePT') || e.target.id.includes('dEPT') || e.target.id.includes('DEPARTmENT') || e.target.id.includes('DEPArTMENT'))) {
+                if (e.target.id && (e.target.id.includes('DEPARTMENT') || e.target.id.includes('DEPARTMENt') || e.target.id.includes('DEPARTMEnT') || e.target.id.includes('DEPARTMeNT') ||e.target.id.includes('DEPARtMENT') || e.target.id.includes('DEPaRTMENT') || e.target.id.includes('DEpARTMENT') || e.target.id.includes('DePARTMENT') || e.target.id.includes('dEPARTMENT') || e.target.id.includes('DEPt') || e.target.id.includes('DEpT') || e.target.id.includes('DePT') || e.target.id.includes('dEPT') || e.target.id.includes('DEPARTmENT') || e.target.id.includes('DEPArTMENT'))) {
                     const facultySelect = e.target.parentElement.nextElementSibling.querySelector('select[id*="faculty_name"]');
                     if (facultySelect) {
                         facultySelect.innerHTML = '<option value="">Select Faculty Name</option>';
