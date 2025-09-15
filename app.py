@@ -2653,7 +2653,7 @@ def get_student_chapters():
                    sc.resource_person, sc.college, sc.participant_count, sc.details,
                    GROUP_CONCAT(ed.department SEPARATOR ', ') AS departments
             FROM student_chapters sc
-            LEFT JOIN event_departments ed ON sc.id = ed.event_id
+            LEFT JOIN student_chapter_departments ed ON sc.id = ed.chapter_id
         '''
         
         if department:
@@ -3559,9 +3559,12 @@ def submit_student_chapters():
 
         event_id = cursor.lastrowid  # Get the last inserted event ID
 
-        # Insert selected departments into event_departments
+        # Insert selected departments into student_chapter_departments
         for dept in departments:
-            cursor.execute("INSERT INTO event_departments (event_id, department_name) VALUES (%s, %s)", (event_id, dept))
+            cursor.execute("""
+                INSERT INTO student_chapter_departments (chapter_id, department)
+                VALUES (%s, %s)
+            """, (event_id, dept))
         
         conn.commit()
         flash('Event details inserted successfully!', 'success')
