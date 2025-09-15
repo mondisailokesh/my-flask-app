@@ -843,15 +843,19 @@ def get_nptel_courses():
 @app.route('/submit_patent', methods=['POST'])
 def submit_patent():
     if request.method == 'POST':
-        applicant_name = request.form['Applicant']
-        inventors = request.form['studentpatentinventorName']
-        department = request.form['department']
-        patent_title = request.form['Studentpatenttitle']
-        patent_number = request.form['studentpatentnumber']
-        status = ', '.join(request.form.getlist('sfpg'))
-        filed_date = request.form['studentpatentfileddate']
-        published_date = request.form['studentpatentpublisheddate']
-        granted_date = request.form['studentpatentgranteddate']
+        try:
+            applicant_name = request.form['Applicant']
+            inventors = request.form['studentpatentinventorName']
+            department = request.form['department']
+            patent_title = request.form['Studentpatenttitle']
+            patent_number = request.form['studentpatentnumber']
+            status = ', '.join(request.form.getlist('sfpg'))
+            filed_date = request.form['studentpatentfileddate']
+            published_date = request.form['studentpatentpublisheddate']
+            granted_date = request.form['studentpatentgranteddate']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -864,7 +868,7 @@ def submit_patent():
             flash('Patent data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -873,19 +877,23 @@ def submit_patent():
 @app.route('/submit_publication_journals', methods=['POST'])
 def submit_publication():
     if request.method == 'POST':
-        student_name = request.form['journalstudentname']
-        registration_number = request.form['journalstudentRegistratioNumber']
-        department = request.form['departmenT']
-        journal_type = request.form['sjsswsg']
-        authors = request.form['studentjournalsAuthorsDesignation']
-        journal_name = request.form['studentjournalname']
-        paper_title = request.form['studentjournalpapertitle']
-        issn = request.form['studentjournalissn']
-        quartile_ranking = request.form['studentjournalQuartileRanking']
-        doi = request.form['studentjournaldoi']
-        volume = request.form['studentjournalvolume']
-        page = request.form['studentjournalpage']
-        month_year = request.form['studentjournalmonthandyear']
+        try:
+            student_name = request.form['journalstudentname']
+            registration_number = request.form['journalstudentRegistratioNumber']
+            department = request.form['departmenT']
+            journal_type = request.form['sjsswsg']
+            authors = request.form['studentjournalsAuthorsDesignation']
+            journal_name = request.form['studentjournalname']
+            paper_title = request.form['studentjournalpapertitle']
+            issn = request.form['studentjournalissn']
+            quartile_ranking = request.form['studentjournalQuartileRanking']
+            doi = request.form['studentjournaldoi']
+            volume = request.form['studentjournalvolume']
+            page = request.form['studentjournalpage']
+            month_year = request.form['studentjournalmonthandyear']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -898,7 +906,7 @@ def submit_publication():
             flash('Publication data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -907,18 +915,22 @@ def submit_publication():
 @app.route('/submit_publications_conference', methods=['POST'])
 def submit_publication_conference():
     if request.method == 'POST':
-        student_name = request.form['conferencestudentname']
-        registration_number = request.form['conferencestudentRegistratioNumber']
-        department = request.form['departmeNt']
-        scsswsg = request.form['scsswsg']
-        authors_designation = request.form['studentconferenceauthorsdesignation']
-        conference_name = request.form['studentconferencename']
-        paper_title = request.form['studentconferencepapertitle']
-        issn = request.form['studentconferenceissn']
-        doi = request.form['studentconferencedoi']
-        volume = request.form['studentconferencevolume']
-        page = request.form['studentconferencepage']
-        month_year = request.form['studentconferencemonthandyear']
+        try:
+            student_name = request.form['conferencestudentname']
+            registration_number = request.form['conferencestudentRegistratioNumber']
+            department = request.form['departmeNt']
+            scsswsg = request.form['scsswsg']
+            authors_designation = request.form['studentconferenceauthorsdesignation']
+            conference_name = request.form['studentconferencename']
+            paper_title = request.form['studentconferencepapertitle']
+            issn = request.form['studentconferenceissn']
+            doi = request.form['studentconferencedoi']
+            volume = request.form['studentconferencevolume']
+            page = request.form['studentconferencepage']
+            month_year = request.form['studentconferencemonthandyear']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -931,7 +943,7 @@ def submit_publication_conference():
             flash('Conference publication data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -969,12 +981,16 @@ def submit_workshop():
 @app.route('/submit_achievement', methods=['POST'])
 def submit_achievement():
     if request.method == 'POST':
-        student_name = request.form['acheivementawardedstudentname']
-        registration_number = request.form['acheivementawardedstudentRegistratioNumber']
-        department = request.form['DepartMent']
-        achievement_name = request.form['studentacheivementname']
-        awarded_by = request.form['studentacheivementAwardedby']
-        achievement_date = request.form['studentacheivementmonthandyear']  # Directly store as VARCHAR
+        try:
+            student_name = request.form['acheivementawardedstudentname']
+            registration_number = request.form['acheivementawardedstudentRegistratioNumber']
+            department = request.form['DepartMent']
+            achievement_name = request.form['studentacheivementname']
+            awarded_by = request.form['studentacheivementAwardedby']
+            achievement_date = request.form['studentacheivementmonthandyear']  # Directly store as VARCHAR
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -987,7 +1003,7 @@ def submit_achievement():
             flash('Achievement data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -996,13 +1012,17 @@ def submit_achievement():
 @app.route('/submit_industry_visit', methods=['POST'])
 def submit_industry_visit():
     if request.method == 'POST':
-        student_name = request.form['industryvisitedstudentname']
-        registration_number = request.form['industryvisitedstudentRegistratioNumber']
-        department = request.form['deparTment']
-        industry_name = request.form['studentvisitedindustryname']
-        visit_date = request.form['studentvisitedindustryDate']  # Date will be received as 'YYYY-MM-DD'
-        significance = request.form['studentvisitedindustrySignificance']
-        location = request.form['studentvisitedindustrylocation']
+        try:
+            student_name = request.form['industryvisitedstudentname']
+            registration_number = request.form['industryvisitedstudentRegistratioNumber']
+            department = request.form['deparTment']
+            industry_name = request.form['studentvisitedindustryname']
+            visit_date = request.form['studentvisitedindustryDate']  # Date will be received as 'YYYY-MM-DD'
+            significance = request.form['studentvisitedindustrySignificance']
+            location = request.form['studentvisitedindustrylocation']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -1015,7 +1035,7 @@ def submit_industry_visit():
             flash('Industry visit data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -1024,12 +1044,17 @@ def submit_industry_visit():
 @app.route('/submit_vedic_workshop', methods=['POST'])
 def submit_vedic_workshop():
     if request.method == 'POST':
-        student_name = request.form['vedicattendedstudentname']
-        registration_number = request.form['vedicattendedstudentRegistrationNumber']
-        department = request.form['depaRtment']
-        workshop_name = request.form['studentattendedvedicworkshopname']
-        event_date = request.form['studentattendedvedicworkshopdate']  # Date will be received as 'YYYY-MM-DD'
-        venue = request.form['studentattendedvedicvenue']
+        try:
+            student_name = request.form['vedicattendedstudentname']
+            registration_number = request.form['vedicattendedstudentRegistrationNumber']
+            department = request.form['depaRtment']
+            workshop_name = request.form['studentattendedvedicworkshopname']
+            event_date = request.form['studentattendedvedicworkshopdate']  # Date will be received as 'YYYY-MM-DD'
+            venue = request.form['studentattendedvedicvenue']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
+
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
@@ -1041,7 +1066,7 @@ def submit_vedic_workshop():
             flash('VEDIC workshop data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -1050,13 +1075,17 @@ def submit_vedic_workshop():
 @app.route('/submit_outside_competition', methods=['POST'])
 def submit_outside_competition():
     if request.method == 'POST':
-        student_name = request.form['outsideparicipatedstudentname']
-        registration_number = request.form['outsideparicipatedstudentRegistrationNumber']
-        department = request.form['depArtmeNt']
-        competition_name = request.form['studentattendedNameoftheWSP']
-        organized_by = request.form['studentattendedparticipationOrganisedbY']
-        duration = request.form['studentattendedparticipationduration']
-        level = request.form['studentattendedparticipationNaIn']
+        try:
+            student_name = request.form['outsideparicipatedstudentname']
+            registration_number = request.form['outsideparicipatedstudentRegistrationNumber']
+            department = request.form['depArtmeNt']
+            competition_name = request.form['studentattendedNameoftheWSP']
+            organized_by = request.form['studentattendedparticipationOrganisedbY']
+            duration = request.form['studentattendedparticipationduration']
+            level = request.form['studentattendedparticipationNaIn']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -1069,7 +1098,7 @@ def submit_outside_competition():
             flash('Competition participation data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -1078,18 +1107,22 @@ def submit_outside_competition():
 @app.route('/submit_sports_participation', methods=['POST'])
 def submit_sports_participation():
     if request.method == 'POST':
-        student_name = request.form['sportparticipatedstudentname']
-        registration_number = request.form['sportparticipatedstudentRegistratioNumber']
-        department = request.form['dePartment']
-        year = request.form['sportparticipatedstudentyear']
-        game_name = request.form['NameoftheGameparticipated']
-        game_details = request.form['participatedGameDetails']
-        organized_by = request.form['participatedgameOrganisedBY']
-        venue = request.form['participatedgamevenue']
-        event_start_date = request.form['gameeventstartingdate']
-        event_end_date = request.form['gameeventendingdate']
-        secured_position = request.form['gameSecuredPosition']
-        level = request.form['gameNaIna']
+        try:
+            student_name = request.form['sportparticipatedstudentname']
+            registration_number = request.form['sportparticipatedstudentRegistratioNumber']
+            department = request.form['dePartment']
+            year = request.form['sportparticipatedstudentyear']
+            game_name = request.form['NameoftheGameparticipated']
+            game_details = request.form['participatedGameDetails']
+            organized_by = request.form['participatedgameOrganisedBY']
+            venue = request.form['participatedgamevenue']
+            event_start_date = request.form['gameeventstartingdate']
+            event_end_date = request.form['gameeventendingdate']
+            secured_position = request.form['gameSecuredPosition']
+            level = request.form['gameNaIna']
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -1102,7 +1135,7 @@ def submit_sports_participation():
             flash('Sports participation data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -1895,35 +1928,38 @@ def get_faculty_nptel_courses():
         conn.close()
         
 @app.route('/submit_faculty_patents', methods=['POST'])
+@app.route('/submit_faculty_patent', methods=['POST'])
 def submit_faculty_patent():
     if request.method == 'POST':
-        # Extract form data
-        inventors = request.form['facultypatentapplicant']
-        department = request.form['DEPARTMENT']
-        applicant_name = request.form.get('faculty_name_3')  # dropdown only
-        patent_title = request.form['facultypatenttitle']
-        patent_number = request.form['facultypatentnumber']
-        status = ', '.join(request.form.getlist('ffpg'))  # Combine checkbox values
+        try:
+            inventors = request.form['facultypatentapplicant']
+            department = request.form['DEPARTMENT']
+            applicant_name = request.form['faculty_name_3']  # dropdown only, required
+            patent_title = request.form['facultypatenttitle']
+            patent_number = request.form['facultypatentnumber']
+            status = ', '.join(request.form.getlist('ffpg'))
+            filed_date = request.form.get('facultypatentfileddate') or None
+            published_date = request.form.get('facultypatentpublisheddate') or None
+            granted_date = request.form.get('facultypatentgranteddate') or None
+            if not applicant_name:
+                flash('Faculty Name is required!', 'danger')
+                return redirect(url_for('page4_faculty'))
+        except KeyError as e:
+            flash(f'Missing required field: {str(e)}', 'danger')
+            return redirect(url_for('page4_faculty'))
 
-        # Handle optional date fields
-        filed_date = request.form.get('facultypatentfileddate') or None
-        published_date = request.form.get('facultypatentpublisheddate') or None
-        granted_date = request.form.get('facultypatentgranteddate') or None
-
-        # Get a database connection from the pool
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            # Insert data into the database
             cursor.execute('''
                 INSERT INTO faculty_patents (applicant_name, inventors, department, patent_title, patent_number, status, filed_date, published_date, granted_date)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (applicant_name, inventors, department, patent_title, patent_number, status, filed_date, published_date, granted_date))
             conn.commit()
-            print('Patent data submitted successfully!', 'success')
+            flash('Patent data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Database Error: {str(e)}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -1970,24 +2006,24 @@ def submit_research_grant():
 @app.route('/submit_consultancy', methods=['POST'])
 def submit_consultancy():
     if request.method == 'POST':
-        # Extract form data
         try:
             consultancy_name = request.form['Consultancyname']
             department = request.form['DEPARTMEnT']
-            faculty_name = request.form.get('faculty_name_3')  # dropdown only
+            faculty_name = request.form['faculty_name_3']  # dropdown only, required
             funding_agency = request.form['consultancyagency']
             faculty_names = request.form['consultancyfaculty']
             duration = request.form['consultancyduration']
             amount_granted = request.form['consultancyamountgranted']
+            if not faculty_name:
+                flash('Faculty Name is required!', 'danger')
+                return redirect(url_for('page4_faculty'))
         except KeyError as e:
             flash(f'Missing required field: {str(e)}', 'danger')
             return redirect(url_for('page4_faculty'))
 
-        # Get a database connection from the pool
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            # Insert data into the database
             cursor.execute('''
                 INSERT INTO consultancy (
                     consultancy_name, department, faculty_name, funding_agency, faculty_names, duration, amount_granted
@@ -1999,7 +2035,8 @@ def submit_consultancy():
             flash('Consultancy data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            error_details = f"Consultancyname: {consultancy_name}, DEPARTMEnT: {department}, faculty_name_3: {faculty_name}, consultancyagency: {funding_agency}, consultancyfaculty: {faculty_names}, consultancyduration: {duration}, consultancyamountgranted: {amount_granted}"
+            flash(f'Database Error: {str(e)} | Submitted values: {error_details}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -2332,22 +2369,22 @@ def submit_faculty_achievements():
 @app.route('/submit_faculty_vedic', methods=['POST'])
 def submit_faculty_vedic():
     if request.method == 'POST':
-        # Extract form data
         try:
-            faculty_name = request.form.get('faculty_name_12')  # dropdown only
+            faculty_name = request.form['faculty_name_12']  # dropdown only, required
             department = request.form['DEPT']
             workshop_name = request.form['facultyattendedvedicworkshopname']
             event_date = request.form['facultyattendedvedicwsname']
             venue = request.form['facultyattendedvedicvenue']
+            if not faculty_name:
+                flash('Faculty Name is required!', 'danger')
+                return redirect(url_for('page4_faculty'))
         except KeyError as e:
             flash(f'Missing required field: {str(e)}', 'danger')
             return redirect(url_for('page4_faculty'))
 
-        # Get a database connection from the pool
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            # Insert data into the database
             cursor.execute('''
                 INSERT INTO faculty_vedic_workshops (
                     faculty_name, department, workshop_name, event_date, venue
@@ -2359,7 +2396,8 @@ def submit_faculty_vedic():
             flash('Faculty VEDIC workshop data submitted successfully!', 'success')
         except Exception as e:
             conn.rollback()
-            flash(f'Error: {str(e)}', 'danger')
+            error_details = f"faculty_name_12: {faculty_name}, DEPT: {department}, facultyattendedvedicworkshopname: {workshop_name}, facultyattendedvedicwsname: {event_date}, facultyattendedvedicvenue: {venue}"
+            flash(f'Database Error: {str(e)} | Submitted values: {error_details}', 'danger')
         finally:
             cursor.close()
             conn.close()
@@ -6304,10 +6342,6 @@ def get_department_fest_events():
     finally:
         cursor.close()
         conn.close()
-
-# Place this route after app initialization
-
-# ...existing code...
 
 @app.route('/get_all_faculty_details', methods=['GET'])
 def get_all_faculty_details():
