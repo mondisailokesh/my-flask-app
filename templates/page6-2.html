@@ -67,7 +67,29 @@
                         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Events by Organising Department</h2>
                         <div class="flex space-x-4">
-                        <input type="text" id="organiserName" placeholder="Enter Organising Department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                        <select id="organiserName" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <option value="">Select Organising Department</option>
+                            <option value="AIDS">AI & DS</option>
+                            <option value="AIML">AI & ML</option>
+                            <option value="BS">BS</option>
+                            <option value="CSBS">CSBS</option>
+                            <option value="CSE">CSE</option>
+                            <option value="CE">CE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="EEE">EEE</option>
+                            <option value="IT">IT</option>
+                            <option value="ME">ME</option>
+                            <option value="ReseaarchAndDevelopment">R & D</option>
+                            <option value="NSS">NSS</option>
+                            <option value="Ecell">Ecell</option>
+                            <option value="IIC">IIC</option>
+                            <option value="IEDC">IEDC</option>
+                            <option value="MSME">MSME</option>
+                            <option value="LIBRARY">LIBRARY</option>
+                            <option value="SPORTS">SPORTS</option>
+                            <option value="SSC">SSC</option>
+                            <option value="CRT">CRT</option>
+                        </select>
                         <button onclick="fetchEvents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
                     </div>
 
