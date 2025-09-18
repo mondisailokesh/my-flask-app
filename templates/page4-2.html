@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Fields</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .excel-like-table {
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .excel-like-table th,
+        .excel-like-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        .excel-like-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .excel-like-table tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+        .excel-like-table tr:hover {
+            background-color: #ebf8ff;
+        }
+    </style>
+</head>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-200 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-white p-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img alt="Institute logo" class="mr-4" height="50" src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" width="50"/>
+                <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
+                <h2>Bhimavaram, West Godavari District</h2>
+                <h2>Affiliated to JNTUK</h2>
+                <h2>Accredited by NAAC 'A+'</h2>
+                <h2>Approved by AICTE</h2>
+            </div>
+        </div>
+    </header>
+    <div class="flex flex-1">
+        <div class="w-1/5 bg-blue-600 text-white p-2 space-y-2 overflow-y-auto h-full">
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field1')">Patents Published and Granted</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field2')">Research Grants / Status</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field3')">Consultancy</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field4')">Publications (journals)</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field5')">Publications (Conference)</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field6')">Faculty acted as a resource person</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field7')">Book Publications</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field8')">Industries visited</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field9')">HRD/FDP/SDP's attended</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field10')">Workshop/Seminar/Guest lecturers attended</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field11')">Awards / Achievements / Recognitions</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field12')">Vedic workshops attended</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field13')">Ph.D Supervisor data</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field14')">Conference and Journals Reviewer</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field15')">Certifications</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field16')">NPTEL/Other online courses</button>
+        </div>
+        <div class="w-4/5 p-8">
+            <!-- Loading Spinner -->
+            <div id="loading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <p class="text-blue-600 font-semibold">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Patents Section -->
+            <div id="field1" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Patents by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                            <button onclick="fetchPatents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportPatentsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Patent Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Applicant Name</th>
+                                        <th>Inventors</th>
+                                        <th>Department</th>
+                                        <th>Patent Title</th>
+                                        <th>Patent Number</th>
+                                        <th>Status</th>
+                                        <th>Filed Date</th>
+                                        <th>Published Date</th>
+                                        <th>Granted Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patents-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Grants Section -->
+            <div id="field2" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Research Grants by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="Department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                            <button onclick="fetchResearchGrants()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportResearchGrantsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Research Grants Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Project ID</th>
+                                        <th>Project Title</th>
+                                        <th>Funding Agency</th>
+                                        <th>Principal Investigator</th>
+                                        <th>Co-PI</th>
+                                        <th>Project Duration</th>
+                                        <th>Total Grant Sanctioned</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="research-grants-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field3" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Consultancy by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="dEpartment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                            <button onclick="fetchConsultancy()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportConsultancyExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Consultancy Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Consultancy Name</th>
+                                        <th>Department</th>
+                                        <th>Funding Agency</th>
+                                        <th>Faculty Names</th>
+                                        <th>Duration</th>
+                                        <th>Amount Granted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="consultancy-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field4" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Publications(journals) by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="dePartment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfjournals()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFjournalsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Publications Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Journal Type</th>
+                                        <th>Authors</th>
+                                        <th>Journal Name</th>
+                                        <th>Title Of Paper</th>
+                                        <th>ISSN</th>
+                                        <th>Quartile Ranking</th>
+                                        <th>DOI</th>
+                                        <th>Volume</th>
+                                        <th>Page</th>
+                                        <th>Month and Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fjournals-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field5" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Publications(Conference) by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="depArtment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfconferences()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFconferencesExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Publications Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Conference Type</th>
+                                        <th>Authors</th>
+                                        <th>Conference Name</th>
+                                        <th>Title Of Paper</th>
+                                        <th>ISSN</th>
+                                        <th>DOI</th>
+                                        <th>Volume</th>
+                                        <th>Page</th>
+                                        <th>Month and Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fconference-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field6" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Faculty acted as a resource person by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="depaRtment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchresource()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportResourceExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Resource Activity Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Date Of Activity</th>
+                                        <th>College Name</th>
+                                        <th>Resource Activity</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resource-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field7" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Book Publications by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="deparTment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchbooks()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportBooksExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Book Publications Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Designation</th>
+                                        <th>Department</th>
+                                        <th>Book Type</th>
+                                        <th>Book Title</th>
+                                        <th>ISSN</th>
+                                        <th>Indexed in</th>
+                                        <th>Publishing Agency</th>
+                                        <th>Month and Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="books-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field8" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Industries visits by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="departMent" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfindustries()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFindustriesExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Industrial Visits Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Industry Name</th>
+                                        <th>Visited Date</th>
+                                        <th>Significance</th>
+                                        <th>Location</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="findustries-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field9" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search HRD/FDP/SDP's attended by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="departmEnt" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfdp()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFdpExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">HRD/FDP/SDP's Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Event Name</th>
+                                        <th>Event Type</th>
+                                        <th>Starting Date</th>
+                                        <th>Ending Date</th>
+                                        <th>Organised By</th>
+                                        <th>Department</th>
+                                        <th>National/International</th>
+                                        <th>Mode</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fdp-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field10" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Workshop/Seminar/Guest lecturers attended by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="departmeNt" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfws()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFwsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Workshop/Seminar/Guest lecturers Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Event Name</th>
+                                        <th>National/International</th>
+                                        <th>Type</th>
+                                        <th>Starting Date</th>
+                                        <th>Ending Date</th>
+                                        <th>Organised by</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fws-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field11" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Achievements by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="departmenT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfachievements()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFachievementsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Achievements Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Achievement Name</th>
+                                        <th>Awarded By</th>
+                                        <th>Month & Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fachievements-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field12" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Vedic workshops by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="DEPARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfvedic()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFvedicExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Vedic workshops Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>workshop Name</th>
+                                        <th>Event Date</th>
+                                        <th>Venue</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fvedic-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field13" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Ph.D Supervisor data by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="dEPARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchSupervisor()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportSupervisorExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Ph.D Supervisor Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Supervisor Name</th>
+                                        <th>Research Scholar Name</th>
+                                        <th>Department</th>
+                                        <th>University Name</th>
+                                        <th>Full time/Part time</th>
+                                        <th>Month & Year</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="supervisor-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field14" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Conference and Journals Reviews by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="DePARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchreview()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportReviewExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Conference and Journals Reviews Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Date Of review</th>
+                                        <th>Conference/Journal Name</th>
+                                        <th>Type</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="review-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field15" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Certifications by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="DEpARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfcertifications()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFcertificationsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Certifications Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Course Title</th>
+                                        <th>Course Duration</th>
+                                        <th>Course Topic</th>
+                                        <th>Course Details</th>
+                                        <th>Certificate</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certifications-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field16" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search NPTEL/Other online courses by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="DEPaRTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
+                        <button onclick="fetchfnptel()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        <button onclick="exportFnptelExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">NPTEL/Other online courses Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Faculty Name</th>
+                                        <th>Department</th>
+                                        <th>Course Title</th>
+                                        <th>Course Duration</th>
+                                        <th>Course ID</th>
+                                        <th>Score</th>
+                                        <th>Platform</th>
+                                        <th>Details</th>
+                                        <th>Certificate</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fnptel-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        
+        function formatDateOnly(dateStr) {
+            if (!dateStr) return 'N/A';
+            const d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+            // Format: 'Mon, 10 Feb 2025'
+            return d.toLocaleDateString('en-GB', {
+                weekday: 'short', year: 'numeric', month: 'short', day: '2-digit'
+            });
+        }
+
+        function exportPatentsExcel() {
+            const tbody = document.getElementById('patents-list');
+            if (!tbody) { alert('No patents data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No patents table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Patents');
+            XLSX.writeFile(wb, 'patents.xlsx');
+        }
+        function exportResearchGrantsExcel() {
+            const tbody = document.getElementById('research-grants-list');
+            if (!tbody) { alert('No research grants data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No research grants table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Research Grants');
+            XLSX.writeFile(wb, 'research-grants.xlsx');
+        }
+        function exportConsultancyExcel() {
+            const tbody = document.getElementById('consultancy-list');
+            if (!tbody) { alert('No consultancy data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No consultancy table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Consultancy');
+            XLSX.writeFile(wb, 'consultancy.xlsx');
+        }
+        function showContent(fieldId) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('visible');
+            });
+            const selectedContent = document.getElementById(fieldId);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('visible');
+        }
+
+        async function fetchPatents() {
+            const loading = document.getElementById('loading');
+            const patentsList = document.getElementById('patents-list');
+            const department = document.getElementById('department').value.trim();
+
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/get_faculty_patents?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                patentsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    patentsList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No patents found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(patent => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${patent.applicant_name || 'N/A'}</td>
+                        <td>${patent.inventors || 'N/A'}</td>
+                        <td>${patent.department || 'N/A'}</td>
+                        <td>${patent.patent_title || 'N/A'}</td>
+                        <td>${patent.patent_number || 'N/A'}</td>
+                        <td>${patent.status || 'N/A'}</td>
+                        <td>${formatDateOnly(patent.filed_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(patent.published_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(patent.granted_date) || 'N/A'}</td>
+                    `;
+                    patentsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching patents:', error);
+                patentsList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchResearchGrants() {
+            const loading = document.getElementById('loading');
+            const researchGrantsList = document.getElementById('research-grants-list');
+            const department = document.getElementById('Department').value.trim();
+
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/get_research_grants?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                researchGrantsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    researchGrantsList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No research grants found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(grant => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${grant.faculty_name || 'N/A'}</td>
+                        <td>${grant.department || 'N/A'}</td>
+                        <td>${grant.project_id || 'N/A'}</td>
+                        <td>${grant.project_title || 'N/A'}</td>
+                        <td>${grant.funding_agency || 'N/A'}</td>
+                        <td>${grant.principle_investigator || 'N/A'}</td>
+                        <td>${grant.co_pi || 'N/A'}</td>
+                        <td>${grant.project_duration || 'N/A'}</td>
+                        <td>${grant.total_grant_sanctioned || 'N/A'}</td>
+                    `;
+                    researchGrantsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching research grants:', error);
+                researchGrantsList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchConsultancy() {
+            const loading = document.getElementById('loading');
+            const consultancyList = document.getElementById('consultancy-list');
+            const department = document.getElementById('dEpartment').value.trim();
+
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/get_consultancy?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                consultancyList.innerHTML = '';
+
+                if (data.length === 0) {
+                    consultancyList.innerHTML = `<tr><td colspan="6" class="text-gray-500 text-center">No consultancy data found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(consultancy => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${consultancy.consultancy_name || 'N/A'}</td>
+                        <td>${consultancy.department || 'N/A'}</td>
+                        <td>${consultancy.funding_agency || 'N/A'}</td>
+                        <td>${consultancy.faculty_names || 'N/A'}</td>
+                        <td>${consultancy.duration || 'N/A'}</td>
+                        <td>${consultancy.amount_granted || 'N/A'}</td>
+                    `;
+                    consultancyList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching consultancy data:', error);
+                consultancyList.innerHTML = `<tr><td colspan="6" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfjournals() {
+        function exportFjournalsExcel() {
+            const tbody = document.getElementById('fjournals-list');
+            if (!tbody) { alert('No journals data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No journals table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Publications (Journals)');
+            XLSX.writeFile(wb, 'publications-journals.xlsx');
+        }
+        function exportFconferencesExcel() {
+            const tbody = document.getElementById('fconference-list');
+            if (!tbody) { alert('No conferences data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No conferences table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Publications (Conference)');
+            XLSX.writeFile(wb, 'publications-conference.xlsx');
+        }
+        function exportResourceExcel() {
+            const tbody = document.getElementById('resource-list');
+            if (!tbody) { alert('No resource activity data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No resource activity table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Resource Activities');
+            XLSX.writeFile(wb, 'resource-activities.xlsx');
+        }
+        function exportBooksExcel() {
+            const tbody = document.getElementById('books-list');
+            if (!tbody) { alert('No books data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No books table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Book Publications');
+            XLSX.writeFile(wb, 'book-publications.xlsx');
+        }
+        function exportFindustriesExcel() {
+            const tbody = document.getElementById('findustries-list');
+            if (!tbody) { alert('No industries data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No industries table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Industrial Visits');
+            XLSX.writeFile(wb, 'industrial-visits.xlsx');
+        }
+        function exportFdpExcel() {
+            const tbody = document.getElementById('fdp-list');
+            if (!tbody) { alert('No FDP data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No FDP table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "HRD/FDP/SDP's");
+            XLSX.writeFile(wb, 'hrd-fdp-sdp.xlsx');
+        }
+        function exportFwsExcel() {
+            const tbody = document.getElementById('fws-list');
+            if (!tbody) { alert('No workshops/seminars data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No workshops/seminars table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Workshops/Seminars');
+            XLSX.writeFile(wb, 'workshops-seminars.xlsx');
+        }
+        function exportFachievementsExcel() {
+            const tbody = document.getElementById('fachievements-list');
+            if (!tbody) { alert('No achievements data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No achievements table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Achievements');
+            XLSX.writeFile(wb, 'achievements.xlsx');
+        }
+        function exportFvedicExcel() {
+            const tbody = document.getElementById('fvedic-list');
+            if (!tbody) { alert('No vedic workshops data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No vedic workshops table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Vedic Workshops');
+            XLSX.writeFile(wb, 'vedic-workshops.xlsx');
+        }
+        function exportSupervisorExcel() {
+            const tbody = document.getElementById('supervisor-list');
+            if (!tbody) { alert('No supervisor data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No supervisor table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'PhD Supervisor');
+            XLSX.writeFile(wb, 'phd-supervisor.xlsx');
+        }
+        function exportReviewExcel() {
+            const tbody = document.getElementById('review-list');
+            if (!tbody) { alert('No review data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No review table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Conference/Journals Review');
+            XLSX.writeFile(wb, 'conference-journals-review.xlsx');
+        }
+        function exportFcertificationsExcel() {
+            const tbody = document.getElementById('certifications-list');
+            if (!tbody) { alert('No certifications data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No certifications table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Certifications');
+            XLSX.writeFile(wb, 'certifications.xlsx');
+        }
+        function exportFnptelExcel() {
+            const tbody = document.getElementById('fnptel-list');
+            if (!tbody) { alert('No NPTEL/online courses data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No NPTEL/online courses table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'NPTEL/Online Courses');
+            XLSX.writeFile(wb, 'nptel-online-courses.xlsx');
+        }
+            const loading = document.getElementById('loading');
+            const fjournalsList = document.getElementById('fjournals-list');
+            const department = document.getElementById('dePartment').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_journals?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fjournalsList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fjournalsList.innerHTML = `<tr><td colspan="12" class="text-gray-500 text-center">No journal publications found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(journal => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${journal.faculty_name || 'N/A'}</td>
+                        <td>${journal.department || 'N/A'}</td>
+                        <td>${journal.journal_type || 'N/A'}</td>
+                        <td>${journal.authors_designations || 'N/A'}</td>
+                        <td>${journal.journal_name || 'N/A'}</td>
+                        <td>${journal.paper_title || 'N/A'}</td>
+                        <td>${journal.issn || 'N/A'}</td>
+                        <td>${journal.quartile_ranking || 'N/A'}</td>
+                        <td>${journal.doi || 'N/A'}</td>
+                        <td>${journal.volume || 'N/A'}</td>
+                        <td>${journal.page || 'N/A'}</td>
+                        <td>${journal.month_and_year || 'N/A'}</td>
+                    `;
+                    fjournalsList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching journal publications:', error);
+                fjournalsList.innerHTML = `<tr><td colspan="12" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfconferences() {
+            const loading = document.getElementById('loading');
+            const fconferenceList = document.getElementById('fconference-list');
+            const department = document.getElementById('depArtment').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_conferences?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fconferenceList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fconferenceList.innerHTML = `<tr><td colspan="11" class="text-gray-500 text-center">No conference publications found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(conference => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${conference.faculty_name || 'N/A'}</td>
+                        <td>${conference.department || 'N/A'}</td>
+                        <td>${conference.conference_type || 'N/A'}</td>
+                        <td>${conference.authors_designations || 'N/A'}</td>
+                        <td>${conference.conference_name || 'N/A'}</td>
+                        <td>${conference.paper_title || 'N/A'}</td>
+                        <td>${conference.issn || 'N/A'}</td>
+                        <td>${conference.doi || 'N/A'}</td>
+                        <td>${conference.volume || 'N/A'}</td>
+                        <td>${conference.page || 'N/A'}</td>
+                        <td>${conference.month_and_year || 'N/A'}</td>
+                    `;
+                    fconferenceList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching conference publications:', error);
+                fconferenceList.innerHTML = `<tr><td colspan="11" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchresource() {
+            const loading = document.getElementById('loading');
+            const resourceList = document.getElementById('resource-list');
+            const department = document.getElementById('depaRtment').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_resource_person?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                resourceList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    resourceList.innerHTML = `<tr><td colspan="6" class="text-gray-500 text-center">No resource person data found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(resource => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${resource.faculty_name || 'N/A'}</td>
+                        <td>${resource.department || 'N/A'}</td>
+                        <td>${formatDateOnly(resource.date_of_activity) || 'N/A'}</td>
+                        <td>${resource.college_name || 'N/A'}</td>
+                        <td>${resource.resource_activity || 'N/A'}</td>
+                        <td>${resource.remarks || 'N/A'}</td>
+                    `;
+                    resourceList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching resource person data:', error);
+                resourceList.innerHTML = `<tr><td colspan="6" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchbooks() {
+            const loading = document.getElementById('loading');
+            const booksList = document.getElementById('books-list');
+            const department = document.getElementById('deparTment').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_book_publications?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                booksList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    booksList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No book publications found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.faculty_name || 'N/A'}</td>
+                        <td>${book.designation || 'N/A'}</td>
+                        <td>${book.department || 'N/A'}</td>
+                        <td>${book.book_type || 'N/A'}</td>
+                        <td>${book.book_title || 'N/A'}</td>
+                        <td>${book.isbn || 'N/A'}</td>
+                        <td>${book.indexed_in || 'N/A'}</td>
+                        <td>${book.publishing_agency || 'N/A'}</td>
+                        <td>${book.month_and_year || 'N/A'}</td>
+                    `;
+                    booksList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching book publications:', error);
+                booksList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfindustries() {
+            const loading = document.getElementById('loading');
+            const findustriesList = document.getElementById('findustries-list');
+            const department = document.getElementById('departMent').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_industry_visits?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                findustriesList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    findustriesList.innerHTML = `<tr><td colspan="6" class="text-gray-500 text-center">No industry visits found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(visit => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${visit.faculty_name || 'N/A'}</td>
+                        <td>${visit.department || 'N/A'}</td>
+                        <td>${visit.industry_name || 'N/A'}</td>
+                        <td>${formatDateOnly(visit.visit_date) || 'N/A'}</td>
+                        <td>${visit.significance || 'N/A'}</td>
+                        <td>${visit.location || 'N/A'}</td>
+                    `;
+                    findustriesList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching industry visits:', error);
+                findustriesList.innerHTML = `<tr><td colspan="6" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfdp() {
+            const loading = document.getElementById('loading');
+            const fdpList = document.getElementById('fdp-list');
+            const department = document.getElementById('departmEnt').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_hrd_fdp_sdp?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fdpList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fdpList.innerHTML = `<tr><td colspan="10" class="text-gray-500 text-center">No HRD/FDP/SDP data found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(fdp => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${fdp.faculty_name || 'N/A'}</td>
+                        <td>${fdp.department || 'N/A'}</td>
+                        <td>${fdp.program_name || 'N/A'}</td>
+                        <td>${fdp.program_type || 'N/A'}</td>
+                        <td>${formatDateOnly(fdp.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(fdp.end_date) || 'N/A'}</td>
+                        <td>${fdp.organized_by || 'N/A'}</td>
+                        <td>${fdp.national_international || 'N/A'}</td>
+                        <td>${fdp.mode || 'N/A'}</td>
+                    `;
+                    fdpList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching HRD/FDP/SDP data:', error);
+                fdpList.innerHTML = `<tr><td colspan="10" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfws() {
+            const loading = document.getElementById('loading');
+            const fwsList = document.getElementById('fws-list');
+            const department = document.getElementById('departmeNt').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_ws_sem_gs?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fwsList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fwsList.innerHTML = `<tr><td colspan="8" class="text-gray-500 text-center">No workshop/seminar/guest lecture data found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(ws => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${ws.faculty_name || 'N/A'}</td>
+                        <td>${ws.department || 'N/A'}</td>
+                        <td>${ws.event_name || 'N/A'}</td>
+                        <td>${ws.national_international || 'N/A'}</td>
+                        <td>${ws.event_type || 'N/A'}</td>
+                        <td>${formatDateOnly(ws.start_dateformatDateOnly) || 'N/A'}</td>
+                        <td>${formatDateOnly(ws.end_date) || 'N/A'}</td>
+                        <td>${ws.organized_by || 'N/A'}</td>
+                    `;
+                    fwsList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching workshop/seminar/guest lecture data:', error);
+                fwsList.innerHTML = `<tr><td colspan="8" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfachievements() {
+            const loading = document.getElementById('loading');
+            const fachievementsList = document.getElementById('fachievements-list');
+            const department = document.getElementById('departmenT').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_achievements?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fachievementsList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fachievementsList.innerHTML = `<tr><td colspan="5" class="text-gray-500 text-center">No achievements found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(achievement => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${achievement.faculty_name || 'N/A'}</td>
+                        <td>${achievement.department || 'N/A'}</td>
+                        <td>${achievement.achievement_name || 'N/A'}</td>
+                        <td>${achievement.awarded_by || 'N/A'}</td>
+                        <td>${achievement.month_and_year || 'N/A'}</td>
+                    `;
+                    fachievementsList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching achievements:', error);
+                fachievementsList.innerHTML = `<tr><td colspan="5" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfvedic() {
+            const loading = document.getElementById('loading');
+            const fvedicList = document.getElementById('fvedic-list');
+            const department = document.getElementById('DEPARTMENT').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_vedic_workshops?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fvedicList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fvedicList.innerHTML = `<tr><td colspan="5" class="text-gray-500 text-center">No Vedic workshops found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(workshop => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${workshop.faculty_name || 'N/A'}</td>
+                        <td>${workshop.department || 'N/A'}</td>
+                        <td>${workshop.workshop_name || 'N/A'}</td>
+                        <td>${formatDateOnly(workshop.event_date) || 'N/A'}</td>
+                        <td>${workshop.venue || 'N/A'}</td>
+                    `;
+                    fvedicList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching Vedic workshops:', error);
+                fvedicList.innerHTML = `<tr><td colspan="5" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchSupervisor() {
+            const loading = document.getElementById('loading');
+            const supervisorList = document.getElementById('supervisor-list');
+            const department = document.getElementById('dEPARTMENT').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_phd_supervisor_details?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                supervisorList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    supervisorList.innerHTML = `<tr><td colspan="7" class="text-gray-500 text-center">No Ph.D supervisor data found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(supervisor => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${supervisor.supervisor_name || 'N/A'}</td>
+                        <td>${supervisor.research_scholar_name || 'N/A'}</td>
+                        <td>${supervisor.department || 'N/A'}</td>
+                        <td>${supervisor.university_name || 'N/A'}</td>
+                        <td>${supervisor.full_time_part_time || 'N/A'}</td>
+                        <td>${supervisor.month_year_of_joining || 'N/A'}</td>
+                        <td>${supervisor.status || 'N/A'}</td>
+                    `;
+                    supervisorList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching Ph.D supervisor data:', error);
+                supervisorList.innerHTML = `<tr><td colspan="7" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchreview() {
+            const loading = document.getElementById('loading');
+            const reviewList = document.getElementById('review-list');
+            const department = document.getElementById('DePARTMENT').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_conference_journal_reviewer?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                reviewList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    reviewList.innerHTML = `<tr><td colspan="6" class="text-gray-500 text-center">No review data found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(review => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${review.faculty_name || 'N/A'}</td>
+                        <td>${review.department || 'N/A'}</td>
+                        <td>${formatDateOnly(review.date_of_review) || 'N/A'}</td>
+                        <td>${review.conference_journal_name || 'N/A'}</td>
+                        <td>${review.review_type || 'N/A'}</td>
+                        <td>${review.remarks || 'N/A'}</td>
+                    `;
+                    reviewList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching review data:', error);
+                reviewList.innerHTML = `<tr><td colspan="6" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfcertifications() {
+            const loading = document.getElementById('loading');
+            const certificationsList = document.getElementById('certifications-list');
+            const department = document.getElementById('DEpARTMENT').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_certifications?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                certificationsList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    certificationsList.innerHTML = `<tr><td colspan="7" class="text-gray-500 text-center">No certifications found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(certification => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${certification.faculty_name || 'N/A'}</td>
+                        <td>${certification.department || 'N/A'}</td>
+                        <td>${certification.course_title || 'N/A'}</td>
+                        <td>${certification.course_duration || 'N/A'}</td>
+                        <td>${certification.course_topic || 'N/A'}</td>
+                        <td>${certification.course_details || 'N/A'}</td>
+                        <td>
+                            ${certification.certificate_path
+                            ? `<a href="${certification.certificate_path}" target="_blank" class="text-blue-600 hover:underline">View Certificate</a>`
+                            : 'N/A'}
+                        </td>
+                    `;
+                    certificationsList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching certifications:', error);
+                certificationsList.innerHTML = `<tr><td colspan="7" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchfnptel() {
+            const loading = document.getElementById('loading');
+            const fnptelList = document.getElementById('fnptel-list');
+            const department = document.getElementById('DEPaRTMENT').value.trim();
+        
+            if (!department) {
+                alert('Please enter a department name');
+                return;
+            }
+        
+            loading.classList.remove('hidden');
+        
+            try {
+                const response = await fetch(`/get_faculty_nptel_courses?department=${encodeURIComponent(department)}`);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+        
+                const data = await response.json();
+                fnptelList.innerHTML = '';
+        
+                if (data.length === 0) {
+                    fnptelList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No NPTEL/online courses found</td></tr>`;
+                    return;
+                }
+        
+                data.forEach(course => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${course.faculty_name || 'N/A'}</td>
+                        <td>${course.department || 'N/A'}</td>
+                        <td>${course.course_title || 'N/A'}</td>
+                        <td>${course.course_duration || 'N/A'}</td>
+                        <td>${course.course_id || 'N/A'}</td>
+                        <td>${course.score || 'N/A'}</td>
+                        <td>${course.platform || 'N/A'}</td>
+                        <td>${course.details || 'N/A'}</td>
+                        <td>
+                            ${course.certificate_path
+                            ? `<a href="${course.certificate_path}" target="_blank" class="text-blue-600 hover:underline">View Certificate</a>`
+                            : 'N/A'}
+                        </td>
+                    `;
+                    fnptelList.appendChild(row);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching NPTEL/online courses:', error);
+                fnptelList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        (function(){
+  function ensureXLSX() {
+    if (typeof XLSX === 'undefined' || !XLSX.utils || !XLSX.writeFile) {
+      alert('XLSX library not loaded. Keep the SheetJS script include.');
+      return false;
+    }
+    return true;
+  }
+  function exportTableByTbodyId(tbodyId, sheetName, fileName){
+    try {
+      if (!ensureXLSX()) return;
+      var tbody = document.getElementById(tbodyId);
+      if (!tbody) { alert('No data section found for ' + sheetName + '.'); return; }
+      var table = tbody.closest('table');
+      if (!table) { alert('No table found for ' + sheetName + '.'); return; }
+      var ws = XLSX.utils.table_to_sheet(table);
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, sheetName || 'Sheet1');
+      XLSX.writeFile(wb, fileName || (sheetName + '.xlsx'));
+    } catch (err) {
+      console.error('Export error for', sheetName, err);
+      alert('Failed to export ' + sheetName + ': ' + err.message);
+    }
+  }
+
+  // Export functions used by your buttons
+  window.exportFjournalsExcel       = function(){ exportTableByTbodyId('fjournals-list',       'Journals',           'journals.xlsx'); };
+  window.exportFconferencesExcel    = function(){ exportTableByTbodyId('fconference-list',     'Conferences',        'conferences.xlsx'); };
+  window.exportResourceExcel        = function(){ exportTableByTbodyId('resource-list',        'Resource Activities','resource_activities.xlsx'); };
+  window.exportBooksExcel           = function(){ exportTableByTbodyId('books-list',           'Books',              'books.xlsx'); };
+  window.exportFindustriesExcel     = function(){ exportTableByTbodyId('findustries-list',     'Industry Interaction','industry_interaction.xlsx'); };
+  window.exportFdpExcel             = function(){ exportTableByTbodyId('fdp-list',             'FDP',                'fdp.xlsx'); };
+  window.exportFwsExcel             = function(){ exportTableByTbodyId('fws-list',             'Workshops',          'workshops.xlsx'); };
+  window.exportFachievementsExcel   = function(){ exportTableByTbodyId('fachievements-list',   'Achievements',       'achievements.xlsx'); };
+  window.exportFvedicExcel          = function(){ exportTableByTbodyId('fvedic-list',          'Vedic Workshops',    'vedic_workshops.xlsx'); };
+  window.exportSupervisorExcel      = function(){ exportTableByTbodyId('supervisor-list',      'Supervisor',         'supervisor.xlsx'); };
+  window.exportReviewExcel          = function(){ exportTableByTbodyId('review-list',          'Review',             'review.xlsx'); };
+  window.exportFcertificationsExcel = function(){ exportTableByTbodyId('certifications-list',  'Certifications',     'certifications.xlsx'); };
+  window.exportFnptelExcel          = function(){ exportTableByTbodyId('fnptel-list',          'NPTEL',              'nptel.xlsx'); };
+
+  // Extra sections present in your page
+  window.exportPatentsExcel         = function(){ exportTableByTbodyId('patents-list',         'Patents',            'patents.xlsx'); };
+  window.exportResearchGrantsExcel  = function(){ exportTableByTbodyId('research-grants-list', 'Research Grants',    'research_grants.xlsx'); };
+  window.exportConsultancyExcel     = function(){ exportTableByTbodyId('consultancy-list',     'Consultancy',        'consultancy.xlsx'); };
+})();
+    </script>
+</body>
+</html>

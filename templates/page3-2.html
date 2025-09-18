@@ -1,0 +1,2546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institute Activities Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .excel-like-table {
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .excel-like-table th,
+        .excel-like-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        .excel-like-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .excel-like-table tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+        .excel-like-table tr:hover {
+            background-color: #ebf8ff;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-white p-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img alt="Institute logo" class="mr-4" height="50" src="/static/images/vishnu-logo.jpg" width="50"/>
+                <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
+                <h2>Bhimavaram, West Godavari District</h2>
+                <h2>Affiliated to JNTUK</h2>
+                <h2>Accredited by NAAC 'A+'</h2>
+                <h2>Approved by AICTE</h2>
+            </div>
+        </div>
+    </header>
+    <div class="flex flex-1">
+        <div class="w-1/5 bg-blue-600 text-white p-2 space-y-2 overflow-y-auto h-full">
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('laboratory')">Laboratory Purchases</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('studentChapters')">Student Chapters</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('higherEducation')">Higher Education</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('internship')">Internship Opportunities</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('alumni')">Alumni Cell</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('mou')">MOU Academia</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('guestSpeakers')">Guest Speakers</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('industrialVisits')">Industrial Visits</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('hrdFdpSdp')">HRD/FDP/SDP Events</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('conferences')">Conferences</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('workshops')">Workshops/Seminars</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('hackathons')">Hackathons</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('nss')">NSS Activities</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('iicIedc')">IIC/IEDC/MSME</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('engineersDay')">Engineers Day</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('ibTech')">IB Tech Activities</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('parentsMeetings')">Parents Meetings</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('rdEvents')">R&D Events</button>
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('festEvents')">Fest Events</button>
+        </div>
+        <div class="w-4/5 p-8">
+            <!-- Loading Spinner -->
+            <div id="loading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <p class="text-blue-600 font-semibold">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Laboratory Purchases -->
+            <div id="laboratory" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Laboratory Purchases by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="labDepartment" name="labDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchLaboratoryPurchases()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportLaboratoryExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Laboratory Purchases Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Lab Name</th>
+                                        <th>Department</th>
+                                        <th>Equipment Name</th>
+                                        <th>Quantity</th>
+                                        <th>Cost</th>
+                                        <th>Purchase Date</th>
+                                        <th>Company Name</th>
+                                        <th>Specifications</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="laboratory-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Chapters -->
+            <div id="studentChapters" class="content hidden">
+            <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Student Chapters by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="studentChapterDepartment" name="studentChapterDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchStudentChapters()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportStudentChaptersExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Student Chapters Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Venue</th>
+                                        <th>Resource Person</th>
+                                        <th>College</th>
+                                        <th>Participant Count</th>
+                                        <th>Details</th>
+                                        <th>Departments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-chapters-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Higher Education -->
+            <div id="higherEducation" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Higher Education by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="higherEdDepartment" name="higherEdDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchHigherEducation()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportHigherEducationExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Higher Education Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Register Number</th>
+                                        <th>Department</th>
+                                        <th>Exam Type</th>
+                                        <th>Exam Rank</th>
+                                        <th>Exam Score</th>
+                                        <th>Course</th>
+                                        <th>Admitted College</th>
+                                        <th>Location</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="higher-education-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internship Opportunities -->
+            <div id="internship" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Internship Opportunities</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="internshipDepartment" name="internshipDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="internshipYear" name="internshipYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchInternshipOpportunities()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportInternshipExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Internship Opportunities Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Register Number</th>
+                                        <th>Department</th>
+                                        <th>Allowed Year</th>
+                                        <th>Company Name</th>
+                                        <th>Company Details</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Duration</th>
+                                        <th>Designation</th>
+                                        <th>Stipend</th>
+                                        <th>Mode</th>
+                                        <th>Location</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="internship-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alumni Cell -->
+            <div id="alumni" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Alumni Cell by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="alumniDepartment" name="alumniDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchAlumniCell()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                            <button onclick="exportAlumniExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Export Excel</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Alumni Cell Details</h2>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Alumni Name</th>
+                                        <th>Talk Title</th>
+                                        <th>Event Date</th>
+                                        <th>Beneficiaries</th>
+                                        <th>Alumni Job</th>
+                                        <th>Alumni RegdNo</th>
+                                        <th>Company Details</th>
+                                        <th>Department</th>
+                                        <th>Participants</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alumni-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOU Academia -->
+            <div id="mou" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-xl font-bold mb-4">MOU Academia Details</h2>
+                            <button onclick="exportMouExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>University</th>
+                                        <th>Contact Person</th>
+                                        <th>Designation</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>MOU Period</th>
+                                        <th>Purpose</th>
+                                        <th>File Path</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mou-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest Speakers -->
+            <div id="guestSpeakers" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Guest Speakers by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="guestSpeakerDepartment" name="guestSpeakerDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchGuestSpeakers()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Guest Speakers Details</h2>
+                        <button onclick="exportGuestSpeakersExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Designation</th>
+                                        <th>Visit Date</th>
+                                        <th>Purpose</th>
+                                        <th>Industry</th>
+                                        <th>Location</th>
+                                        <th>Remarks</th>
+                                        <th>Departments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="guest-speakers-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industrial Visits -->
+            <div id="industrialVisits" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Industrial Visits by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="industrialVisitDepartment" name="industrialVisitDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchIndustrialVisits()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Industrial Visits Details</h2>
+                        <button onclick="exportIndustrialVisitsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Industry Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Location</th>
+                                        <th>Beneficiaries</th>
+                                        <th>Total Students</th>
+                                        <th>Remarks</th>
+                                        <th>Departments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="industrial-visits-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HRD/FDP/SDP Events -->
+            <div id="hrdFdpSdp" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search HRD/FDP/SDP Events</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="hrdDepartment" name="hrdDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="hrdYear" name="hrdYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchHrdFdpSdpEvents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">HRD/FDP/SDP Events Details</h2>
+                        <button onclick="exportHrdFdpSdpExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Title</th>
+                                        <th>Event Type</th>
+                                        <th>Start Date</th>
+                                        <th>Start Time</th>
+                                        <th>End Date</th>
+                                        <th>End Time</th>
+                                        <th>Convener Name</th>
+                                        <th>Convener Phone</th>
+                                        <th>Coordinator Name</th>
+                                        <th>Coordinator Phone</th>
+                                        <th>Resource Person</th>
+                                        <th>Resource Person Designation</th>
+                                        <th>Resource Person CUO</th>
+                                        <th>Topic</th>
+                                        <th>Resource Person Details</th>
+                                        <th>Beneficiaries</th>
+                                        <th>Student Participants</th>
+                                        <th>Remarks</th>
+                                        <th>Brochure Path</th>
+                                        <th>Departments</th>
+                                        <th>Branches</th>
+                                        <th>Years</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hrd-fdp-sdp-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conferences -->
+            <div id="conferences" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Conferences by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="conferenceDepartment" name="conferenceDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchConferences()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Conferences Details</h2>
+                        <button onclick="exportConferencesExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Title</th>
+                                        <th>Conference URL</th>
+                                        <th>Start Date</th>
+                                        <th>Start Time</th>
+                                        <th>End Date</th>
+                                        <th>End Time</th>
+                                        <th>Convener Name</th>
+                                        <th>Convener Phone</th>
+                                        <th>Treasurer Name</th>
+                                        <th>Treasurer Phone</th>
+                                        <th>Papers Received</th>
+                                        <th>Papers Accepted</th>
+                                        <th>Indexing</th>
+                                        <th>Quartile Ranking</th>
+                                        <th>Contact Email</th>
+                                        <th>Contact Phone</th>
+                                        <th>Remarks</th>
+                                        <th>Brochure Path</th>
+                                        <th>Departments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="conferences-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workshops/Seminars/Guest Lectures -->
+            <div id="workshops" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Workshops/Seminars/Guest Lectures</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="workshopDepartment" name="workshopDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="workshopYear" name="workshopYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchWorkshopsSeminars()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Workshops/Seminars/Guest Lectures Details</h2>
+                        <button onclick="exportWorkshopsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>National/International</th>
+                                        <th>Event Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Topic</th>
+                                        <th>Beneficiaries</th>
+                                        <th>Student Participants</th>
+                                        <th>Remarks</th>
+                                        <th>Departments</th>
+                                        <th>Branches</th>
+                                        <th>Years</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="workshops-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hackathons -->
+            <div id="hackathons" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Hackathons</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="hackathonDepartment" name="hackathonDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="hackathonYear" name="hackathonYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchHackathons()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Hackathons Details</h2>
+                        <button onclick="exportHackathonsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hackathon Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Start Time</th>
+                                        <th>Campus Allowed</th>
+                                        <th>Team Limit</th>
+                                        <th>Prize Details</th>
+                                        <th>Winner Details</th>
+                                        <th>Runner Details</th>
+                                        <th>Second Runner Details</th>
+                                        <th>Remarks</th>
+                                        <th>Students Participated</th>
+                                        <th>Departments</th>
+                                        <th>Years Allowed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hackathons-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NSS Activities -->
+            <div id="nss" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search NSS Activities by Year</h2>
+                        <div class="flex space-x-4">
+                            <select id="nssYear" name="nssYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="I">I</option>
+                                <option value="II">II</option>
+                                <option value="III">III</option>
+                                <option value="IV">IV</option>
+                            </select>
+                            <button onclick="fetchNssActivities()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">NSS Activities Details</h2>
+                        <button onclick="exportNssExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Activity Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Start Time</th>
+                                        <th>Purpose</th>
+                                        <th>Coordinator Details</th>
+                                        <th>Resource Person Details</th>
+                                        <th>Remarks</th>
+                                        <th>Students Participated</th>
+                                        <th>Years Allowed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="nss-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IIC/IEDC/MSME Activities -->
+            <div id="iicIedc" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search IIC/IEDC/MSME Activities</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="iicConductedBy" name="iicConductedBy" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="iicYear" name="iicYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchIicIedcActivities()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">IIC/IEDC/MSME Activities Details</h2>
+                        <button onclick="exportIicIedcExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Activity Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Students Participated</th>
+                                        <th>Organizer Details</th>
+                                        <th>Resource Person Details</th>
+                                        <th>Significance</th>
+                                        <th>Remarks</th>
+                                        <th>Conducted By</th>
+                                        <th>Years Allowed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="iic-iedc-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Engineers Day Events -->
+            <div id="engineersDay" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Engineers Day Events</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="engineersDayDepartment" name="engineersDayDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="engineersDayYear" name="engineersDayYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchEngineersDayEvents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Engineers Day Events Details</h2>
+                        <button onclick="exportEngineersDayExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Event Date</th>
+                                        <th>Students Participated</th>
+                                        <th>Details</th>
+                                        <th>Brochure Path</th>
+                                        <th>Departments</th>
+                                        <th>Branches</th>
+                                        <th>Years Allowed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="engineers-day-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IB Tech Activities -->
+            <div id="ibTech" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search IB Tech Activities by Department</h2>
+                        <div class="flex space-x-4">
+                            <select id="ibTechDepartment" name="ibTechDepartment" class="flex-1 px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                                <option value="R & D">R & D</option>
+                                <option value="NSS">NSS</option>
+                                <option value="Ecell">Ecell</option>
+                                <option value="IIC">IIC</option>
+                                <option value="IEDC">IEDC</option>
+                                <option value="MSME">MSME</option>
+                                <option value="LIBRARY">LIBRARY</option>
+                                <option value="SPORTS">SPORTS</option>
+                                <option value="SSC">SSC</option>
+                                <option value="CRT">CRT</option>
+                            </select>
+                            <button onclick="fetchIbTechActivities()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">IB Tech Activities Details</h2>
+                        <button onclick="exportIbTechExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Activity Name</th>
+                                        <th>Activity Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Coordinator Details</th>
+                                        <th>Resource Person Details</th>
+                                        <th>Students Participated</th>
+                                        <th>Remarks</th>
+                                        <th>Conducted Departments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ib-tech-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parents Meetings -->
+            <div id="parentsMeetings" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Parents Meetings</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="parentsMeetingDepartment" name="parentsMeetingDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="parentsMeetingYear" name="parentsMeetingYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchParentsMeetings()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Parents Meetings Details</h2>
+                        <button onclick="exportParentsMeetingsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Purpose</th>
+                                        <th>Meeting Date</th>
+                                        <th>Meeting Time</th>
+                                        <th>Venue</th>
+                                        <th>Coordinator Details</th>
+                                        <th>Parents Attended</th>
+                                        <th>Remarks</th>
+                                        <th>Conducted Departments</th>
+                                        <th>Years</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="parents-meetings-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- R&D Events -->
+            <div id="rdEvents" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search R&D Events</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="rdDepartment" name="rdDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="rdYear" name="rdYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchRdEvents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">R&D Events Details</h2>
+                        <button onclick="exportRdEventsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Event Date</th>
+                                        <th>Coordinator Details</th>
+                                        <th>Resource Person Details</th>
+                                        <th>Remarks</th>
+                                        <th>Students Participated</th>
+                                        <th>Brochure Path</th>
+                                        <th>Departments</th>
+                                        <th>Years Allowed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rd-events-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fest Events -->
+            <div id="festEvents" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h2 class="text-xl font-bold mb-4">Search Fest Events</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1">
+                                <select id="festDepartment" name="festDepartment" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="AI & DS">AI & DS</option>
+                                    <option value="AI & ML">AI & ML</option>
+                                    <option value="BS">BS</option>
+                                    <option value="CSBS">CSBS</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CE">CE</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                    <option value="R & D">R & D</option>
+                                    <option value="NSS">NSS</option>
+                                    <option value="Ecell">Ecell</option>
+                                    <option value="IIC">IIC</option>
+                                    <option value="IEDC">IEDC</option>
+                                    <option value="MSME">MSME</option>
+                                    <option value="LIBRARY">LIBRARY</option>
+                                    <option value="SPORTS">SPORTS</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="CRT">CRT</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <select id="festYear" name="festYear" class="w-full px-3 py-2 border border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="I">I</option>
+                                    <option value="II">II</option>
+                                    <option value="III">III</option>
+                                    <option value="IV">IV</option>
+                                </select>
+                            </div>
+                            <button onclick="fetchFestEvents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Fest Events Details</h2>
+                        <button onclick="exportFestEventsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fest Name</th>
+                                        <th>Fest Date</th>
+                                        <th>Fest Type</th>
+                                        <th>Fest Significance</th>
+                                        <th>Coordinator Details</th>
+                                        <th>Resource Person Details</th>
+                                        <th>Remarks</th>
+                                        <th>Students Participated</th>
+                                        <th>Brochure Path</th>
+                                        <th>Departments</th>
+                                        <th>Student Years</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fest-events-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper to format date as 'Mon, 10 Feb 2025'
+        function formatDateOnly(dateStr) {
+            if (!dateStr) return 'N/A';
+            const d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+            // Format: 'Mon, 10 Feb 2025'
+            return d.toLocaleDateString('en-GB', {
+                weekday: 'short', year: 'numeric', month: 'short', day: '2-digit'
+            });
+        }
+
+        function showContent(fieldId) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('visible');
+            });
+            const selectedContent = document.getElementById(fieldId);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('visible');
+            
+            // Automatically load data for sections without filters
+            if (fieldId === 'mou') {
+                fetchMous();
+            }
+        }
+
+        async function fetchLaboratoryPurchases() {
+            const loading = document.getElementById('loading');
+            const laboratoryList = document.getElementById('laboratory-list');
+            const department = document.getElementById('labDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_laboratories';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                laboratoryList.innerHTML = '';
+
+                if (data.length === 0) {
+                    laboratoryList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No laboratory purchases found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(lab => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${lab.lab_name || 'N/A'}</td>
+                        <td>${lab.department || 'N/A'}</td>
+                        <td>${lab.equipment_name || 'N/A'}</td>
+                        <td>${lab.quantity || 'N/A'}</td>
+                        <td>${lab.cost || 'N/A'}</td>
+                        <td>${formatDateOnly(lab.purchase_date)}</td>
+                        <td>${lab.company_name || 'N/A'}</td>
+                        <td>${lab.specifications || 'N/A'}</td>
+                        <td>${lab.remarks || 'N/A'}</td>
+                    `;
+                    laboratoryList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching laboratory purchases:', error);
+                laboratoryList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchStudentChapters() {
+            const loading = document.getElementById('loading');
+            const studentChaptersList = document.getElementById('student-chapters-list');
+            const department = document.getElementById('studentChapterDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_student_chapters';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                studentChaptersList.innerHTML = '';
+
+                if (data.length === 0) {
+                    studentChaptersList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No student chapters found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(chapter => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${chapter.event_name || 'N/A'}</td>
+                        <td>${formatDateOnly(chapter.start_date)}</td>
+                        <td>${formatDateOnly(chapter.end_date)}</td>
+                        <td>${chapter.venue || 'N/A'}</td>
+                        <td>${chapter.resource_person || 'N/A'}</td>
+                        <td>${chapter.college || 'N/A'}</td>
+                        <td>${chapter.participant_count || 'N/A'}</td>
+                        <td>${chapter.details || 'N/A'}</td>
+                        <td>${chapter.departments || 'N/A'}</td>
+                    `;
+                    studentChaptersList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching student chapters:', error);
+                studentChaptersList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchHigherEducation() {
+            const loading = document.getElementById('loading');
+            const higherEducationList = document.getElementById('higher-education-list');
+            const department = document.getElementById('higherEdDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_higher_education';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                higherEducationList.innerHTML = '';
+
+                if (data.length === 0) {
+                    higherEducationList.innerHTML = `<tr><td colspan="10" class="text-gray-500 text-center">No higher education records found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(education => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${education.student_name || 'N/A'}</td>
+                        <td>${education.register_number || 'N/A'}</td>
+                        <td>${education.department || 'N/A'}</td>
+                        <td>${education.exam_type || 'N/A'}</td>
+                        <td>${education.exam_rank || 'N/A'}</td>
+                        <td>${education.exam_score || 'N/A'}</td>
+                        <td>${education.course || 'N/A'}</td>
+                        <td>${education.admitted_college || 'N/A'}</td>
+                        <td>${education.location || 'N/A'}</td>
+                        <td>${education.remarks || 'N/A'}</td>
+                    `;
+                    higherEducationList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching higher education records:', error);
+                higherEducationList.innerHTML = `<tr><td colspan="10" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchInternshipOpportunities() {
+            const loading = document.getElementById('loading');
+            const internshipList = document.getElementById('internship-list');
+            const department = document.getElementById('internshipDepartment').value.trim();
+            const year = document.getElementById('internshipYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_internships';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                internshipList.innerHTML = '';
+
+                if (data.length === 0) {
+                    internshipList.innerHTML = `<tr><td colspan="14" class="text-gray-500 text-center">No internship opportunities found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(internship => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${internship.student_name || 'N/A'}</td>
+                        <td>${internship.register_number || 'N/A'}</td>
+                        <td>${internship.department || 'N/A'}</td>
+                        <td>${internship.allowed_year || 'N/A'}</td>
+                        <td>${internship.company_name || 'N/A'}</td>
+                        <td>${internship.company_details || 'N/A'}</td>
+                        <td>${formatDateOnly(internship.start_date)}</td>
+                        <td>${formatDateOnly(internship.end_date)}</td>
+                        <td>${internship.duration || 'N/A'}</td>
+                        <td>${internship.designation || 'N/A'}</td>
+                        <td>${internship.stipend || 'N/A'}</td>
+                        <td>${internship.mode || 'N/A'}</td>
+                        <td>${internship.location || 'N/A'}</td>
+                        <td>${internship.remarks || 'N/A'}</td>
+                    `;
+                    internshipList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching internship opportunities:', error);
+                internshipList.innerHTML = `<tr><td colspan="14" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchAlumniCell() {
+            const loading = document.getElementById('loading');
+            const alumniList = document.getElementById('alumni-list');
+            const department = document.getElementById('alumniDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_alumni';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                alumniList.innerHTML = '';
+
+                if (data.length === 0) {
+                    alumniList.innerHTML = `<tr><td colspan="10" class="text-gray-500 text-center">No alumni records found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(alumni => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${alumni.alumni_name || 'N/A'}</td>
+                        <td>${alumni.talk_title || 'N/A'}</td>
+                        <td>${formatDateOnly(alumni.event_date)}</td>
+                        <td>${alumni.beneficiaries || 'N/A'}</td>
+                        <td>${alumni.alumni_job || 'N/A'}</td>
+                        <td>${alumni.alumni_regdno || 'N/A'}</td>
+                        <td>${alumni.company_details || 'N/A'}</td>
+                        <td>${alumni.department || 'N/A'}</td>
+                        <td>${alumni.participants || 'N/A'}</td>
+                        <td>${alumni.remarks || 'N/A'}</td>
+                    `;
+                    alumniList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching alumni records:', error);
+                alumniList.innerHTML = `<tr><td colspan="10" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchMous() {
+            const loading = document.getElementById('loading');
+            const mouList = document.getElementById('mou-list');
+
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/get_mous');
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                mouList.innerHTML = '';
+
+                if (data.length === 0) {
+                    mouList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No MOU records found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(mou => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${mou.university || 'N/A'}</td>
+                        <td>${mou.contact_person || 'N/A'}</td>
+                        <td>${mou.designation || 'N/A'}</td>
+                        <td>${formatDateOnly(mou.start_date)}</td>
+                        <td>${formatDateOnly(mou.end_date)}</td>
+                        <td>${mou.mou_period || 'N/A'}</td>
+                        <td>${mou.purpose || 'N/A'}</td>
+                        <td>
+                            ${mou.file_path
+                            ? `<a href="${mou.file_path}" target="_blank" class="text-blue-600 hover:underline">View Brochure</a>`
+                            : 'N/A'}
+                        </td>
+                        <td>${mou.remarks || 'N/A'}</td>
+                    `;
+                    mouList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching MOU records:', error);
+                mouList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchGuestSpeakers() {
+            const loading = document.getElementById('loading');
+            const guestSpeakersList = document.getElementById('guest-speakers-list');
+            const department = document.getElementById('guestSpeakerDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_guest_speakers';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                guestSpeakersList.innerHTML = '';
+
+                if (data.length === 0) {
+                    guestSpeakersList.innerHTML = `<tr><td colspan="8" class="text-gray-500 text-center">No guest speakers found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(speaker => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${speaker.name || 'N/A'}</td>
+                        <td>${speaker.designation || 'N/A'}</td>
+                        <td>${formatDateOnly(speaker.visit_date)}</td>
+                        <td>${speaker.purpose || 'N/A'}</td>
+                        <td>${speaker.industry || 'N/A'}</td>
+                        <td>${speaker.location || 'N/A'}</td>
+                        <td>${speaker.remarks || 'N/A'}</td>
+                        <td>${speaker.departments || 'N/A'}</td>
+                    `;
+                    guestSpeakersList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching guest speakers:', error);
+                guestSpeakersList.innerHTML = `<tr><td colspan="8" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchIndustrialVisits() {
+            const loading = document.getElementById('loading');
+            const industrialVisitsList = document.getElementById('industrial-visits-list');
+            const department = document.getElementById('industrialVisitDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_industrial_visits';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                industrialVisitsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    industrialVisitsList.innerHTML = `<tr><td colspan="8" class="text-gray-500 text-center">No industrial visits found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(visit => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${visit.industry_name || 'N/A'}</td>
+                        <td>${formatDateOnly(visit.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(visit.end_date) || 'N/A'}</td>
+                        <td>${visit.location || 'N/A'}</td>
+                        <td>${visit.beneficiaries || 'N/A'}</td>
+                        <td>${visit.total_students || 'N/A'}</td>
+                        <td>${visit.remarks || 'N/A'}</td>
+                        <td>${visit.departments || 'N/A'}</td>
+                    `;
+                    industrialVisitsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching industrial visits:', error);
+                industrialVisitsList.innerHTML = `<tr><td colspan="8" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchHrdFdpSdpEvents() {
+            const loading = document.getElementById('loading');
+            const hrdFdpSdpList = document.getElementById('hrd-fdp-sdp-list');
+            const department = document.getElementById('hrdDepartment').value.trim();
+            const year = document.getElementById('hrdYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_hrd_fdp_sdp_events';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                hrdFdpSdpList.innerHTML = '';
+
+                if (data.length === 0) {
+                    hrdFdpSdpList.innerHTML = `<tr><td colspan="22" class="text-gray-500 text-center">No HRD/FDP/SDP events found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(event => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.event_title || 'N/A'}</td>
+                        <td>${event.event_type || 'N/A'}</td>
+                        <td>${formatDateOnly(event.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(event.start_time) || 'N/A'}</td>
+                        <td>${event.end_date || 'N/A'}</td>
+                        <td>${event.end_time || 'N/A'}</td>
+                        <td>${event.convener_name || 'N/A'}</td>
+                        <td>${event.convener_phone || 'N/A'}</td>
+                        <td>${event.coordinator_name || 'N/A'}</td>
+                        <td>${event.coordinator_phone || 'N/A'}</td>
+                        <td>${event.resource_person || 'N/A'}</td>
+                        <td>${event.resource_person_designation || 'N/A'}</td>
+                        <td>${event.resource_person_cuo || 'N/A'}</td>
+                        <td>${event.topic || 'N/A'}</td>
+                        <td>${event.resource_person_details || 'N/A'}</td>
+                        <td>${event.beneficiaries || 'N/A'}</td>
+                        <td>${event.student_participants || 'N/A'}</td>
+                        <td>${event.remarks || 'N/A'}</td>
+                        <td>
+                            ${event.brochure_path
+                            ? `<a href="${event.brochure_path}" target="_blank" class="text-blue-600 hover:underline">View Brochure</a>`
+                            : 'N/A'}
+                        </td>
+                        <td>${event.departments || 'N/A'}</td>
+                        <td>${event.branches || 'N/A'}</td>
+                        <td>${event.years || 'N/A'}</td>
+                    `;
+                    hrdFdpSdpList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching HRD/FDP/SDP events:', error);
+                hrdFdpSdpList.innerHTML = `<tr><td colspan="22" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchConferences() {
+            const loading = document.getElementById('loading');
+            const conferencesList = document.getElementById('conferences-list');
+            const department = document.getElementById('conferenceDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_conferences';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                conferencesList.innerHTML = '';
+
+                if (data.length === 0) {
+                    conferencesList.innerHTML = `<tr><td colspan="19" class="text-gray-500 text-center">No conferences found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(conference => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${conference.event_title || 'N/A'}</td>
+                        <td>${conference.conference_url || 'N/A'}</td>
+                        <td>${formatDateOnly(conference.start_date) || 'N/A'}</td>
+                        <td>${conference.start_time || 'N/A'}</td>
+                        <td>${formatDateOnly(conference.end_date) || 'N/A'}</td>
+                        <td>${conference.end_time || 'N/A'}</td>
+                        <td>${conference.convener_name || 'N/A'}</td>
+                        <td>${conference.convener_phone || 'N/A'}</td>
+                        <td>${conference.treasurer_name || 'N/A'}</td>
+                        <td>${conference.treasurer_phone || 'N/A'}</td>
+                        <td>${conference.papers_received || 'N/A'}</td>
+                        <td>${conference.papers_accepted || 'N/A'}</td>
+                        <td>${conference.indexing || 'N/A'}</td>
+                        <td>${conference.quartile_ranking || 'N/A'}</td>
+                        <td>${conference.contact_email || 'N/A'}</td>
+                        <td>${conference.contact_phone || 'N/A'}</td>
+                        <td>${conference.remarks || 'N/A'}</td>
+                        <td>
+                            ${conference.brochure_path
+                            ? `<a href="${conference.brochure_path}" target="_blank" class="text-blue-600 hover:underline">View Brochure</a>`
+                            : 'N/A'}
+                        </td>
+                        <td>${conference.departments || 'N/A'}</td>
+                    `;
+                    conferencesList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching conferences:', error);
+                conferencesList.innerHTML = `<tr><td colspan="19" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchWorkshopsSeminars() {
+            const loading = document.getElementById('loading');
+            const workshopsList = document.getElementById('workshops-list');
+            const department = document.getElementById('workshopDepartment').value.trim();
+            const year = document.getElementById('workshopYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_workshops_seminars';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                workshopsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    workshopsList.innerHTML = `<tr><td colspan="12" class="text-gray-500 text-center">No workshops/seminars found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(workshop => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${workshop.event_name || 'N/A'}</td>
+                        <td>${workshop.national_international || 'N/A'}</td>
+                        <td>${workshop.event_type || 'N/A'}</td>
+                        <td>${formatDateOnly(workshop.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(workshop.end_date) || 'N/A'}</td>
+                        <td>${workshop.topic || 'N/A'}</td>
+                        <td>${workshop.beneficiaries || 'N/A'}</td>
+                        <td>${workshop.student_participants || 'N/A'}</td>
+                        <td>${workshop.remarks || 'N/A'}</td>
+                        <td>${workshop.departments || 'N/A'}</td>
+                        <td>${workshop.branches || 'N/A'}</td>
+                        <td>${workshop.years || 'N/A'}</td>
+                    `;
+                    workshopsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching workshops/seminars:', error);
+                workshopsList.innerHTML = `<tr><td colspan="12" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchHackathons() {
+            const loading = document.getElementById('loading');
+            const hackathonsList = document.getElementById('hackathons-list');
+            const department = document.getElementById('hackathonDepartment').value.trim();
+            const year = document.getElementById('hackathonYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_hackathons';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                hackathonsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    hackathonsList.innerHTML = `<tr><td colspan="14" class="text-gray-500 text-center">No hackathons found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(hackathon => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${hackathon.hackathon_name || 'N/A'}</td>
+                        <td>${formatDateOnly(hackathon.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(hackathon.end_date) || 'N/A'}</td>
+                        <td>${hackathon.start_time || 'N/A'}</td>
+                        <td>${hackathon.campus_allowed || 'N/A'}</td>
+                        <td>${hackathon.team_limit || 'N/A'}</td>
+                        <td>${hackathon.prize_details || 'N/A'}</td>
+                        <td>${hackathon.winner_details || 'N/A'}</td>
+                        <td>${hackathon.runner_details || 'N/A'}</td>
+                        <td>${hackathon.second_runner_details || 'N/A'}</td>
+                        <td>${hackathon.remarks || 'N/A'}</td>
+                        <td>${hackathon.students_participated || 'N/A'}</td>
+                        <td>${hackathon.departments || 'N/A'}</td>
+                        <td>${hackathon.years_allowed || 'N/A'}</td>
+                    `;
+                    hackathonsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching hackathons:', error);
+                hackathonsList.innerHTML = `<tr><td colspan="14" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchNssActivities() {
+            const loading = document.getElementById('loading');
+            const nssList = document.getElementById('nss-list');
+            const year = document.getElementById('nssYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_nss_activities';
+                if (year) {
+                    url += `?year=${encodeURIComponent(year)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                nssList.innerHTML = '';
+
+                if (data.length === 0) {
+                    nssList.innerHTML = `<tr><td colspan="10" class="text-gray-500 text-center">No NSS activities found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(activity => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${activity.activity_name || 'N/A'}</td>
+                        <td>${formatDateOnly(activity.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(activity.end_date) || 'N/A'}</td>
+                        <td>${activity.start_time || 'N/A'}</td>
+                        <td>${activity.purpose || 'N/A'}</td>
+                        <td>${activity.coordinator_details || 'N/A'}</td>
+                        <td>${activity.resource_person_details || 'N/A'}</td>
+                        <td>${activity.remarks || 'N/A'}</td>
+                        <td>${activity.students_participated || 'N/A'}</td>
+                        <td>${activity.years_allowed || 'N/A'}</td>
+                    `;
+                    nssList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching NSS activities:', error);
+                nssList.innerHTML = `<tr><td colspan="10" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchIicIedcActivities() {
+            const loading = document.getElementById('loading');
+            const iicIedcList = document.getElementById('iic-iedc-list');
+            const conductedBy = document.getElementById('iicConductedBy').value.trim();
+            const year = document.getElementById('iicYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_iic_iedc_msme_activities';
+                const params = [];
+                
+                if (conductedBy) params.push(`conducted_by=${encodeURIComponent(conductedBy)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                iicIedcList.innerHTML = '';
+
+                if (data.length === 0) {
+                    iicIedcList.innerHTML = `<tr><td colspan="10" class="text-gray-500 text-center">No IIC/IEDC/MSME activities found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(activity => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${activity.activity_name || 'N/A'}</td>
+                        <td>${formatDateOnly(activity.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(activity.end_date) || 'N/A'}</td>
+                        <td>${activity.students_participated || 'N/A'}</td>
+                        <td>${activity.organizer_details || 'N/A'}</td>
+                        <td>${activity.resource_person_details || 'N/A'}</td>
+                        <td>${activity.significance || 'N/A'}</td>
+                        <td>${activity.remarks || 'N/A'}</td>
+                        <td>${activity.conducted_by || 'N/A'}</td>
+                        <td>${activity.years_allowed || 'N/A'}</td>
+                    `;
+                    iicIedcList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching IIC/IEDC/MSME activities:', error);
+                iicIedcList.innerHTML = `<tr><td colspan="10" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchEngineersDayEvents() {
+            const loading = document.getElementById('loading');
+            const engineersDayList = document.getElementById('engineers-day-list');
+            const department = document.getElementById('engineersDayDepartment').value.trim();
+            const year = document.getElementById('engineersDayYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_engineers_day_events';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                engineersDayList.innerHTML = '';
+
+                if (data.length === 0) {
+                    engineersDayList.innerHTML = `<tr><td colspan="8" class="text-gray-500 text-center">No Engineers Day events found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(event => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.event_name || 'N/A'}</td>
+                        <td>${formatDateOnly(event.event_date) || 'N/A'}</td>
+                        <td>${event.students_participated || 'N/A'}</td>
+                        <td>${event.details || 'N/A'}</td>
+                        <td>
+                            ${event.brochure_path
+                            ? `<a href="${event.brochure_path}" target="_blank" class="text-blue-600 hover:underline">View Brochure</a>`
+                            : 'N/A'}
+                        </td>
+                        <td>${event.departments || 'N/A'}</td>
+                        <td>${event.branches || 'N/A'}</td>
+                        <td>${event.years_allowed || 'N/A'}</td>
+                    `;
+                    engineersDayList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching Engineers Day events:', error);
+                engineersDayList.innerHTML = `<tr><td colspan="8" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchIbTechActivities() {
+            const loading = document.getElementById('loading');
+            const ibTechList = document.getElementById('ib-tech-list');
+            const department = document.getElementById('ibTechDepartment').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_ibtech_activities';
+                if (department) {
+                    url += `?department=${encodeURIComponent(department)}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                ibTechList.innerHTML = '';
+
+                if (data.length === 0) {
+                    ibTechList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No IB Tech activities found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(activity => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${activity.activity_name || 'N/A'}</td>
+                        <td>${activity.activity_type || 'N/A'}</td>
+                        <td>${formatDateOnly(activity.start_date) || 'N/A'}</td>
+                        <td>${formatDateOnly(activity.end_date) || 'N/A'}</td>
+                        <td>${activity.coordinator_details || 'N/A'}</td>
+                        <td>${activity.resource_person_details || 'N/A'}</td>
+                        <td>${activity.students_participated || 'N/A'}</td>
+                        <td>${activity.remarks || 'N/A'}</td>
+                        <td>${activity.conducted_departments || 'N/A'}</td>
+                    `;
+                    ibTechList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching IB Tech activities:', error);
+                ibTechList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchParentsMeetings() {
+            const loading = document.getElementById('loading');
+            const parentsMeetingsList = document.getElementById('parents-meetings-list');
+            const department = document.getElementById('parentsMeetingDepartment').value.trim();
+            const year = document.getElementById('parentsMeetingYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_parents_meetings';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                parentsMeetingsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    parentsMeetingsList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No parents meetings found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(meeting => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${meeting.purpose || 'N/A'}</td>
+                        <td>${formatDateOnly(meeting.meeting_date) || 'N/A'}</td>
+                        <td>${meeting.meeting_time || 'N/A'}</td>
+                        <td>${meeting.venue || 'N/A'}</td>
+                        <td>${meeting.coordinator_details || 'N/A'}</td>
+                        <td>${meeting.parents_attended || 'N/A'}</td>
+                        <td>${meeting.remarks || 'N/A'}</td>
+                        <td>${meeting.conducted_departments || 'N/A'}</td>
+                        <td>${meeting.years || 'N/A'}</td>
+                    `;
+                    parentsMeetingsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching parents meetings:', error);
+                parentsMeetingsList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchRdEvents() {
+            const loading = document.getElementById('loading');
+            const rdEventsList = document.getElementById('rd-events-list');
+            const department = document.getElementById('rdDepartment').value.trim();
+            const year = document.getElementById('rdYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_rd_events';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                rdEventsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    rdEventsList.innerHTML = `<tr><td colspan="9" class="text-gray-500 text-center">No R&D events found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(event => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.event_name || 'N/A'}</td>
+                        <td>${formatDateOnly(event.event_date) || 'N/A'}</td>
+                        <td>${event.coordinator_details || 'N/A'}</td>
+                        <td>${event.resource_person_details || 'N/A'}</td>
+                        <td>${event.remarks || 'N/A'}</td>
+                        <td>${event.students_participated || 'N/A'}</td>
+                        <td>
+                            ${event.brochure_path
+                            ? `<a href="${event.brochure_path}" target="_blank" class="text-blue-600 hover:underline">View Brochure</a>`
+                            : 'N/A'}
+                        </td>
+                        <td>${event.departments || 'N/A'}</td>
+                        <td>${event.years_allowed || 'N/A'}</td>
+                    `;
+                    rdEventsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching R&D events:', error);
+                rdEventsList.innerHTML = `<tr><td colspan="9" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function fetchFestEvents() {
+            const loading = document.getElementById('loading');
+            const festEventsList = document.getElementById('fest-events-list');
+            const department = document.getElementById('festDepartment').value.trim();
+            const year = document.getElementById('festYear').value.trim();
+
+            loading.classList.remove('hidden');
+
+            try {
+                let url = '/get_fest_events';
+                const params = [];
+                
+                if (department) params.push(`department=${encodeURIComponent(department)}`);
+                if (year) params.push(`year=${encodeURIComponent(year)}`);
+                
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                festEventsList.innerHTML = '';
+
+                if (data.length === 0) {
+                    festEventsList.innerHTML = `<tr><td colspan="11" class="text-gray-500 text-center">No fest events found</td></tr>`;
+                    return;
+                }
+
+                data.forEach(event => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.fest_name || 'N/A'}</td>
+                        <td>${formatDateOnly(event.fest_date) || 'N/A'}</td>
+                        <td>${event.fest_type || 'N/A'}</td>
+                        <td>${event.fest_significance || 'N/A'}</td>
+                        <td>${event.coordinator_details || 'N/A'}</td>
+                        <td>${event.resource_person_details || 'N/A'}</td>
+                        <td>${event.remarks || 'N/A'}</td>
+                        <td>${event.students_participated || 'N/A'}</td>
+                        <td>
+                            ${event.brochure_path
+                            ? `<a href="${event.brochure_path}" target="_blank" class="text-blue-600 hover:underline">View Brochure</a>`
+                            : 'N/A'}
+                        </td>
+                        <td>${event.departments || 'N/A'}</td>
+                        <td>${event.student_years || 'N/A'}</td>
+                    `;
+                    festEventsList.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching fest events:', error);
+                festEventsList.innerHTML = `<tr><td colspan="11" class="text-red-500 text-center">${error.message}</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function exportLaboratoryExcel() {
+            const tbody = document.getElementById('laboratory-list');
+            if (!tbody) { alert('No laboratory data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No laboratory table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Laboratory Purchases');
+            XLSX.writeFile(wb, 'laboratory-purchases.xlsx');
+        }
+        function exportStudentChaptersExcel() {
+            const tbody = document.getElementById('student-chapters-list');
+            if (!tbody) { alert('No student chapters data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No student chapters table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Student Chapters');
+            XLSX.writeFile(wb, 'student-chapters.xlsx');
+        }
+        function exportHigherEducationExcel() {
+            const tbody = document.getElementById('higher-education-list');
+            if (!tbody) { alert('No higher education data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No higher education table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Higher Education');
+            XLSX.writeFile(wb, 'higher-education.xlsx');
+        }
+        function exportInternshipExcel() {
+            const tbody = document.getElementById('internship-list');
+            if (!tbody) { alert('No internship data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No internship table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Internship Opportunities');
+            XLSX.writeFile(wb, 'internship-opportunities.xlsx');
+        }
+        function exportAlumniExcel() {
+            const tbody = document.getElementById('alumni-list');
+            if (!tbody) { alert('No alumni data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No alumni table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Alumni Cell');
+            XLSX.writeFile(wb, 'alumni-cell-details.xlsx');
+        }
+        function exportMouExcel() {
+            const tbody = document.getElementById('mou-list');
+            if (!tbody) { alert('No MOU data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No MOU table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'MOU Academia');
+            XLSX.writeFile(wb, 'mou-academia.xlsx');
+        }
+        function exportGuestSpeakersExcel() {
+            const tbody = document.getElementById('guest-speakers-list');
+            if (!tbody) { alert('No guest speakers data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No guest speakers table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Guest Speakers');
+            XLSX.writeFile(wb, 'guest-speakers.xlsx');
+        }
+        function exportIndustrialVisitsExcel() {
+            const tbody = document.getElementById('industrial-visits-list');
+            if (!tbody) { alert('No industrial visits data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No industrial visits table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Industrial Visits');
+            XLSX.writeFile(wb, 'industrial-visits.xlsx');
+        }
+        function exportHrdFdpSdpExcel() {
+            const tbody = document.getElementById('hrd-fdp-sdp-list');
+            if (!tbody) { alert('No HRD/FDP/SDP events data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No HRD/FDP/SDP events table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'HRD/FDP/SDP Events');
+            XLSX.writeFile(wb, 'hrd-fdp-sdp-events.xlsx');
+        }
+        function exportConferencesExcel() {
+            const tbody = document.getElementById('conferences-list');
+            if (!tbody) { alert('No conferences data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No conferences table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Conferences');
+            XLSX.writeFile(wb, 'conferences.xlsx');
+        }
+        function exportWorkshopsExcel() {
+            const tbody = document.getElementById('workshops-list');
+            if (!tbody) { alert('No workshops/seminars data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No workshops/seminars table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Workshops/Seminars');
+            XLSX.writeFile(wb, 'workshops-seminars.xlsx');
+        }
+        function exportHackathonsExcel() {
+            const tbody = document.getElementById('hackathons-list');
+            if (!tbody) { alert('No hackathons data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No hackathons table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Hackathons');
+            XLSX.writeFile(wb, 'hackathons.xlsx');
+        }
+        function exportNssExcel() {
+            const tbody = document.getElementById('nss-list');
+            if (!tbody) { alert('No NSS activities data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No NSS activities table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'NSS Activities');
+            XLSX.writeFile(wb, 'nss-activities.xlsx');
+        }
+        function exportIicIedcExcel() {
+            const tbody = document.getElementById('iic-iedc-list');
+            if (!tbody) { alert('No IIC/IEDC/MSME activities data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No IIC/IEDC/MSME activities table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'IIC/IEDC/MSME Activities');
+            XLSX.writeFile(wb, 'iic-iedc-msme-activities.xlsx');
+        }
+        function exportEngineersDayExcel() {
+            const tbody = document.getElementById('engineers-day-list');
+            if (!tbody) { alert('No Engineers Day events data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No Engineers Day events table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Engineers Day Events');
+            XLSX.writeFile(wb, 'engineers-day-events.xlsx');
+        }
+        function exportIbTechExcel() {
+            const tbody = document.getElementById('ib-tech-list');
+            if (!tbody) { alert('No IB Tech activities data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No IB Tech activities table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'IB Tech Activities');
+            XLSX.writeFile(wb, 'ib-tech-activities.xlsx');
+        }
+        function exportParentsMeetingsExcel() {
+            const tbody = document.getElementById('parents-meetings-list');
+            if (!tbody) { alert('No parents meetings data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No parents meetings table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Parents Meetings');
+            XLSX.writeFile(wb, 'parents-meetings.xlsx');
+        }
+        function exportRdEventsExcel() {
+            const tbody = document.getElementById('rd-events-list');
+            if (!tbody) { alert('No R&D events data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No R&D events table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'R&D Events');
+            XLSX.writeFile(wb, 'rd-events.xlsx');
+        }
+        function exportFestEventsExcel() {
+            const tbody = document.getElementById('fest-events-list');
+            if (!tbody) { alert('No fest events data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No fest events table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Fest Events');
+            XLSX.writeFile(wb, 'fest-events.xlsx');
+        }
+
+        // Show the first content by default
+        document.addEventListener('DOMContentLoaded', function() {
+            showContent('laboratory');
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+</html>

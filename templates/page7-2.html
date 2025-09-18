@@ -1,0 +1,185 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Fields</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* Custom styling for the table */
+        .excel-like-table {
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .excel-like-table th,
+        .excel-like-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        .excel-like-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .excel-like-table tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+        .excel-like-table tr:hover {
+            background-color: #ebf8ff;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-white p-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img alt="Institute logo with a detailed description of the logo design" class="mr-4" height="50" src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" width="50"/>
+                <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
+                <h2>Bhimavaram, West Godavari District</h2>
+                <h2>Affiliated to JNTUK</h2>
+                <h2>Accredited by NAAC 'A+'</h2>
+                <h2>Approved by AICTE</h2>
+            </div>
+        </div>
+    </header>
+    <div class="flex flex-1">
+        <div class="w-1/5 bg-blue-600 text-white p-2 space-y-2 overflow-y-auto h-full">
+            <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field1')">Startups</button>
+        </div>
+        <div class="w-4/5 p-8">
+            <div id="field1" class="content hidden">
+                <div class="container mx-auto p-6">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Table Container -->
+                        <button onclick="exportStartupsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
+                        <div class="overflow-x-auto">
+                            <table class="excel-like-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Foundation Date</th>
+                                        <th>Industry Sector</th>
+                                        <th>Current Stage</th>
+                                        <th>Website Link</th>
+                                        <th>Founder Details</th>
+                                        <th>Overview</th>
+                                        <th>Financial Details</th>
+                                        <th>Market Competition</th>
+                                        <th>Product/Service Details</th>
+                                        <th>Additional Info</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="startups-list">
+                                    <!-- Data will be populated here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Loading Spinner -->
+                <div id="loading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <p class="text-blue-600 font-semibold">Loading...</p>
+                    </div>
+                </div>            
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function formatDateOnly(dateStr) {
+            if (!dateStr) return 'N/A';
+            const d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+            // Format: 'Mon, 10 Feb 2025'
+            return d.toLocaleDateString('en-GB', {
+                weekday: 'short', year: 'numeric', month: 'short', day: '2-digit'
+            });
+        }
+
+        function showContent(fieldId) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('visible');
+            });
+            const selectedContent = document.getElementById(fieldId);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('visible');
+        }
+
+        function exportStartupsExcel() {
+            const tbody = document.getElementById('startups-list');
+            if (!tbody) { alert('No startups data to export!'); return; }
+            const table = tbody.closest('table');
+            if (!table) { alert('No startups table found!'); return; }
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Startups');
+            XLSX.writeFile(wb, 'startups.xlsx');
+        }
+
+        // Fetch startups data from the backend
+        async function fetchStartups() {
+            const loading = document.getElementById('loading');
+            const startupsList = document.getElementById('startups-list');
+
+            // Show loading spinner
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/get_startups');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+
+                // Clear existing table rows
+                startupsList.innerHTML = '';
+
+                // Populate table with data
+                data.forEach(startup => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${startup.name || 'N/A'}</td>
+                        <td>${formatDateOnly(startup.foundation_date) || 'N/A'}</td>
+                        <td>${startup.industry_sector || 'N/A'}</td>
+                        <td>${startup.current_stage || 'N/A'}</td>
+                        <td><a href="${startup.website_link}" target="_blank" class="text-blue-500 hover:underline">${startup.website_link || 'N/A'}</a></td>
+                        <td>${startup.founder_details || 'N/A'}</td>
+                        <td>${startup.overview || 'N/A'}</td>
+                        <td>${startup.financial_details || 'N/A'}</td>
+                        <td>${startup.market_competition || 'N/A'}</td>
+                        <td>${startup.product_service_details || 'N/A'}</td>
+                        <td>${startup.additional_info || 'N/A'}</td>
+                    `;
+                    startupsList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching startups:', error);
+                startupsList.innerHTML = `<tr><td colspan="11" class="text-red-500 text-center">Error: ${error.message}</td></tr>`;
+            } finally {
+                // Hide loading spinner
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Fetch data when the page loads
+        document.addEventListener('DOMContentLoaded', fetchStartups);
+    </script>
+</body>
+</html>
