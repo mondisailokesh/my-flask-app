@@ -45,18 +45,20 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="bg-gray-200 flex flex-col min-h-screen">
-    <header class="bg-blue-600 text-white p-6">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <img alt="Institute logo" class="mr-4" height="50" src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" width="50"/>
-                <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
-                <h2>Bhimavaram, West Godavari District</h2>
-                <h2>Affiliated to JNTUK</h2>
-                <h2>Accredited by NAAC 'A+'</h2>
-                <h2>Approved by AICTE</h2>
+        <header class="bg-blue-600 text-white p-6">
+            <div class="container mx-auto flex flex-col md:flex-row md:justify-between md:items-center text-center md:text-left">
+                <div class="flex flex-col md:flex-row md:items-center w-full justify-center md:justify-start">
+                    <img src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" alt="Institute logo" class="mx-auto md:mr-4 mb-2 md:mb-0" width="50" height="50" />
+                    <div class="flex flex-col items-center md:items-start w-full">
+                        <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
+                        <h2 class="text-base md:text-lg">Bhimavaram, West Godavari District</h2>
+                        <h2 class="text-base md:text-lg">Affiliated to JNTUK</h2>
+                        <h2 class="text-base md:text-lg">Accredited by NAAC 'A+'</h2>
+                        <h2 class="text-base md:text-lg">Approved by AICTE</h2>
+                    </div>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
     <div class="flex flex-1">
         <div class="w-1/5 bg-blue-600 text-white p-2 space-y-2 overflow-y-auto h-full">
             <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field1')">Patents Published and Granted</button>
@@ -90,7 +92,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Patents by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="department" name="department" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -113,6 +115,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Applicant Name</th>
                                         <th>Inventors</th>
                                         <th>Department</th>
@@ -139,7 +142,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Research Grants by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="Department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="Department" name="Department" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -162,6 +165,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Project ID</th>
@@ -187,7 +191,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Consultancy by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="dEpartment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="dEpartment" name="dEpartment" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -210,6 +214,8 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
+                                        <th>Faculty Name</th>
                                         <th>Consultancy Name</th>
                                         <th>Department</th>
                                         <th>Funding Agency</th>
@@ -232,7 +238,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Publications(journals) by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="dePartment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="dePartment" name="dePartment" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -255,6 +261,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Journal Type</th>
@@ -283,7 +290,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Publications(Conference) by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="depArtment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="depArtment" name="depArtment" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -306,6 +313,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Conference Type</th>
@@ -333,7 +341,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Faculty acted as a resource person by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="depaRtment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="depaRtment" name="depaRtment" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -356,6 +364,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Date Of Activity</th>
@@ -378,7 +387,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Book Publications by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="deparTment" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="deparTment" name="deparTment" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -401,6 +410,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Designation</th>
                                         <th>Department</th>
@@ -426,7 +436,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Industries visits by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="departMent" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="departMent" name="departMent" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -449,6 +459,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Industry Name</th>
@@ -471,7 +482,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search HRD/FDP/SDP's attended by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="departmEnt" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="departmEnt" name="departmEnt" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -494,6 +505,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Event Name</th>
@@ -501,7 +513,6 @@
                                         <th>Starting Date</th>
                                         <th>Ending Date</th>
                                         <th>Organised By</th>
-                                        <th>Department</th>
                                         <th>National/International</th>
                                         <th>Mode</th>
                                     </tr>
@@ -520,7 +531,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Workshop/Seminar/Guest lecturers attended by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="departmeNt" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="departmeNt" name="departmeNt" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -543,6 +554,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Event Name</th>
@@ -567,7 +579,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Achievements by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="departmenT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="departmenT" name="departmenT" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -590,6 +602,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Achievement Name</th>
@@ -611,7 +624,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Vedic workshops by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="DEPARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="DEPARTMENT" name="DEPARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -634,6 +647,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>workshop Name</th>
@@ -655,7 +669,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Ph.D Supervisor data by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="dEPARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="dEPARTMENT" name="dEPARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -701,7 +715,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Conference and Journals Reviews by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="DePARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="DePARTMENT" name="DePARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -724,7 +738,8 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
-                                        <th>faculty Name</th>
+                                        <th>Faculty ID</th>
+                                        <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Date Of review</th>
                                         <th>Conference/Journal Name</th>
@@ -746,7 +761,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Certifications by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="DEpARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="DEpARTMENT" name="DEpARTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -769,6 +784,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Course Title</th>
@@ -792,7 +808,7 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search NPTEL/Other online courses by Department</h2>
                         <div class="flex space-x-4">
-                            <select id="DEPaRTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="DEPaRTMENT" name="DEPaRTMENT" class="flex-1 p-2 border border-gray-300 rounded-md">
                                 <option value="">Select Department</option>
                                 <option value="AI & DS">AI & DS</option>
                                 <option value="AI & ML">AI & ML</option>
@@ -815,6 +831,7 @@
                             <table class="excel-like-table">
                                 <thead>
                                     <tr>
+                                        <th>Faculty ID</th>
                                         <th>Faculty Name</th>
                                         <th>Department</th>
                                         <th>Course Title</th>
@@ -920,6 +937,7 @@
                 data.forEach(patent => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${patent.faculty_id || 'N/A'}</td>
                         <td>${patent.applicant_name || 'N/A'}</td>
                         <td>${patent.inventors || 'N/A'}</td>
                         <td>${patent.department || 'N/A'}</td>
@@ -970,6 +988,7 @@
                 data.forEach(grant => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${grant.faculty_id || 'N/A'}</td>
                         <td>${grant.faculty_name || 'N/A'}</td>
                         <td>${grant.department || 'N/A'}</td>
                         <td>${grant.project_id || 'N/A'}</td>
@@ -1020,6 +1039,8 @@
                 data.forEach(consultancy => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${consultancy.faculty_id || 'N/A'}</td>
+                        <td>${consultancy.faculty_name || 'N/A'}</td>
                         <td>${consultancy.consultancy_name || 'N/A'}</td>
                         <td>${consultancy.department || 'N/A'}</td>
                         <td>${consultancy.funding_agency || 'N/A'}</td>
@@ -1197,6 +1218,7 @@
                 data.forEach(journal => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${journal.faculty_id || 'N/A'}</td>
                         <td>${journal.faculty_name || 'N/A'}</td>
                         <td>${journal.department || 'N/A'}</td>
                         <td>${journal.journal_type || 'N/A'}</td>
@@ -1250,6 +1272,7 @@
                 data.forEach(conference => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${conference.faculty_id || 'N/A'}</td>
                         <td>${conference.faculty_name || 'N/A'}</td>
                         <td>${conference.department || 'N/A'}</td>
                         <td>${conference.conference_type || 'N/A'}</td>
@@ -1302,6 +1325,7 @@
                 data.forEach(resource => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${resource.faculty_id || 'N/A'}</td>
                         <td>${resource.faculty_name || 'N/A'}</td>
                         <td>${resource.department || 'N/A'}</td>
                         <td>${formatDateOnly(resource.date_of_activity) || 'N/A'}</td>
@@ -1349,6 +1373,7 @@
                 data.forEach(book => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${book.faculty_id || 'N/A'}</td>
                         <td>${book.faculty_name || 'N/A'}</td>
                         <td>${book.designation || 'N/A'}</td>
                         <td>${book.department || 'N/A'}</td>
@@ -1399,6 +1424,7 @@
                 data.forEach(visit => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${visit.faculty_id || 'N/A'}</td>
                         <td>${visit.faculty_name || 'N/A'}</td>
                         <td>${visit.department || 'N/A'}</td>
                         <td>${visit.industry_name || 'N/A'}</td>
@@ -1446,6 +1472,7 @@
                 data.forEach(fdp => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${fdp.faculty_id || 'N/A'}</td>
                         <td>${fdp.faculty_name || 'N/A'}</td>
                         <td>${fdp.department || 'N/A'}</td>
                         <td>${fdp.program_name || 'N/A'}</td>
@@ -1496,6 +1523,7 @@
                 data.forEach(ws => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${ws.faculty_id || 'N/A'}</td>
                         <td>${ws.faculty_name || 'N/A'}</td>
                         <td>${ws.department || 'N/A'}</td>
                         <td>${ws.event_name || 'N/A'}</td>
@@ -1545,6 +1573,7 @@
                 data.forEach(achievement => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${achievement.faculty_id || 'N/A'}</td>
                         <td>${achievement.faculty_name || 'N/A'}</td>
                         <td>${achievement.department || 'N/A'}</td>
                         <td>${achievement.achievement_name || 'N/A'}</td>
@@ -1591,6 +1620,7 @@
                 data.forEach(workshop => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${workshop.faculty_id || 'N/A'}</td>
                         <td>${workshop.faculty_name || 'N/A'}</td>
                         <td>${workshop.department || 'N/A'}</td>
                         <td>${workshop.workshop_name || 'N/A'}</td>
@@ -1685,6 +1715,7 @@
                 data.forEach(review => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${review.faculty_id || 'N/A'}</td>
                         <td>${review.faculty_name || 'N/A'}</td>
                         <td>${review.department || 'N/A'}</td>
                         <td>${formatDateOnly(review.date_of_review) || 'N/A'}</td>
@@ -1732,6 +1763,7 @@
                 data.forEach(certification => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${certification.faculty_id || 'N/A'}</td>
                         <td>${certification.faculty_name || 'N/A'}</td>
                         <td>${certification.department || 'N/A'}</td>
                         <td>${certification.course_title || 'N/A'}</td>
@@ -1784,6 +1816,7 @@
                 data.forEach(course => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${course.faculty_id || 'N/A'}</td>
                         <td>${course.faculty_name || 'N/A'}</td>
                         <td>${course.department || 'N/A'}</td>
                         <td>${course.course_title || 'N/A'}</td>
