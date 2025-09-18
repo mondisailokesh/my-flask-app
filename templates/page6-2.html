@@ -43,18 +43,20 @@
     </style>
 </head>
 <body class="bg-gray-200 flex flex-col min-h-screen">
-    <header class="bg-blue-600 text-white p-6">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <img alt="Institute logo with a detailed description of the logo design" class="mr-4" height="50" src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" width="50"/>
-                <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
-                <h2>Bhimavaram, West Godavari District</h2>
-                <h2>Affiliated to JNTUK</h2>
-                <h2>Accredited by NAAC 'A+'</h2>
-                <h2>Approved by AICTE</h2>
+        <header class="bg-blue-600 text-white p-6">
+            <div class="container mx-auto flex flex-col md:flex-row md:justify-between md:items-center text-center md:text-left">
+                <div class="flex flex-col md:flex-row md:items-center w-full justify-center md:justify-start">
+                    <img src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" alt="Institute logo" class="mx-auto md:mr-4 mb-2 md:mb-0" width="50" height="50" />
+                    <div class="flex flex-col items-center md:items-start w-full">
+                        <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
+                        <h2 class="text-base md:text-lg">Bhimavaram, West Godavari District</h2>
+                        <h2 class="text-base md:text-lg">Affiliated to JNTUK</h2>
+                        <h2 class="text-base md:text-lg">Accredited by NAAC 'A+'</h2>
+                        <h2 class="text-base md:text-lg">Approved by AICTE</h2>
+                    </div>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
     <div class="flex flex-1">
         <div class="w-1/5 bg-blue-600 text-white p-2 space-y-2 overflow-y-auto h-full">
             <button class="w-full py-2 rounded-lg hover:bg-blue-700 transition" onclick="showContent('field1')">Student Clubs and Student Success Center</button>
@@ -67,7 +69,29 @@
                         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Events by Organising Department</h2>
                         <div class="flex space-x-4">
-                        <input type="text" id="organiserName" placeholder="Enter Organising Department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                        <select id="organiserName" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <option value="">Select Organising Department</option>
+                            <option value="AIDS">AI & DS</option>
+                            <option value="AIML">AI & ML</option>
+                            <option value="BS">BS</option>
+                            <option value="CSBS">CSBS</option>
+                            <option value="CSE">CSE</option>
+                            <option value="CE">CE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="EEE">EEE</option>
+                            <option value="IT">IT</option>
+                            <option value="ME">ME</option>
+                            <option value="ReseaarchAndDevelopment">R & D</option>
+                            <option value="NSS">NSS</option>
+                            <option value="Ecell">Ecell</option>
+                            <option value="IIC">IIC</option>
+                            <option value="IEDC">IEDC</option>
+                            <option value="MSME">MSME</option>
+                            <option value="LIBRARY">LIBRARY</option>
+                            <option value="SPORTS">SPORTS</option>
+                            <option value="SSC">SSC</option>
+                            <option value="CRT">CRT</option>
+                        </select>
                         <button onclick="fetchEvents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
                     </div>
 
