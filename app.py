@@ -506,7 +506,7 @@ def get_patents():
     try:
         cursor = conn.cursor(dictionary=True)
         query = """
-            SELECT faculty_id, applicant_name, inventors, department, patent_title, patent_number, 
+            SELECT applicant_name, inventors, department, patent_title, patent_number, 
                    status, filed_date, published_date, granted_date
             FROM patents
             WHERE department = %s
