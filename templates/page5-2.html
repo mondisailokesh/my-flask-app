@@ -90,7 +90,19 @@
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search patents by Department</h2>
                         <div class="flex space-x-4">
-                            <input type="text" id="Departmentname" placeholder="Enter Department" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <select id="Departmentname" class="flex-1 p-2 border border-gray-300 rounded-md">
+                                <option value="">Select Department</option>
+                                <option value="AI & DS">AI & DS</option>
+                                <option value="AI & ML">AI & ML</option>
+                                <option value="BS">BS</option>
+                                <option value="CSBS">CSBS</option>
+                                <option value="CSE">CSE</option>
+                                <option value="CE">CE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="IT">IT</option>
+                                <option value="ME">ME</option>
+                            </select>
                             <button onclick="fetchPatents()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
                         </div>
                     </div>
