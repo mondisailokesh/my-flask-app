@@ -7,10 +7,10 @@
     <script>
     // JavaScript to dynamically populate faculty_id and faculty_name based on department selection for all forms
     document.addEventListener('DOMContentLoaded', function () {
-        // Helper to add classes/disabled to all relevant fields (id >= 7)
+        // Helper to add classes/disabled to all relevant fields (id >= 1)
         function fixFieldClasses() {
-            // For all forms from field7 to field16
-            for (let i = 7; i <= 16; i++) {
+            // For all forms from field1 to field16
+            for (let i = 1; i <= 16; i++) {
                 const form = document.querySelector(`#field${i} form`);
                 if (!form) continue;
                 // Department dropdown
@@ -45,7 +45,12 @@
 
                 // Reset fields
                 if (facultyIdSelect) {
-                    facultyIdSelect.innerHTML = '<option value="">Select Faculty ID</option>';
+                    // Remove all options (including duplicates) before adding the default
+                    facultyIdSelect.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select Faculty ID';
+                    facultyIdSelect.appendChild(defaultOption);
                     facultyIdSelect.disabled = true;
                 }
                 if (facultyNameInput) facultyNameInput.value = '';
@@ -57,11 +62,16 @@
                     .then(response => response.json())
                     .then(data => {
                         if (Array.isArray(data) && data.length > 0) {
+                            // Use a Set to avoid duplicate faculty IDs
+                            const seen = new Set();
                             data.forEach(faculty => {
-                                const option = document.createElement('option');
-                                option.value = faculty.user_id;
-                                option.textContent = faculty.user_id;
-                                facultyIdSelect.appendChild(option);
+                                if (!seen.has(faculty.user_id)) {
+                                    const option = document.createElement('option');
+                                    option.value = faculty.user_id;
+                                    option.textContent = faculty.user_id;
+                                    facultyIdSelect.appendChild(option);
+                                    seen.add(faculty.user_id);
+                                }
                             });
                             facultyIdSelect.disabled = false;
                         }
@@ -1214,7 +1224,7 @@
             selectedContent.classList.remove('hidden');
             selectedContent.classList.add('visible');
         }
-
+/*
         // Generalized dynamic dropdown functionality for all forms
         document.addEventListener('DOMContentLoaded', function() {
             let facultyData = [];
@@ -1262,7 +1272,7 @@
                     }
                 }
             });
-        });
+        });*/
     </script>
 </body>
 </html>
