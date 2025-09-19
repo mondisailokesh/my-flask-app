@@ -9,7 +9,7 @@
         body { font-family: 'Roboto', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center">
+<body class="bg-gray-100 text-gray-800 min-h-screen">
         <header class="bg-blue-600 text-white p-6 w-full">
             <div class="container mx-auto flex flex-col md:flex-row md:justify-between md:items-center text-center md:text-left">
                 <div class="flex flex-col md:flex-row md:items-center w-full justify-center md:justify-start">
@@ -24,6 +24,7 @@
                 </div>
             </div>
         </header>
+        <center>
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 class="text-2xl font-bold mb-6 text-center">Remove Existing User</h2>
         <form method="POST" action="{{ url_for('remove_user_hods') }}" class="space-y-5">
@@ -48,6 +49,7 @@
             </div>
             <button type="submit" class="w-full bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition">Remove User</button>
         </form>
+    </center>
         <script>
         document.getElementById('user_type').addEventListener('change', function() {
             var relDiv = document.getElementById('relieving_date_div');
