@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Fields</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         .content {
             transition: opacity 0.5s ease-in-out;
@@ -45,13 +45,10 @@
     </style>
 </head>
 <body class="bg-gray-200 flex flex-col min-h-screen">
-    <script>
-        const loggedInRegisterNumber = "{{ session['user_id'] if 'user_id' in session else '' }}";
-    </script>
     <header class="bg-blue-600 text-white p-6">
         <div class="container mx-auto flex flex-col md:flex-row md:justify-between md:items-center text-center md:text-left">
             <div class="flex flex-col md:flex-row md:items-center w-full justify-center md:justify-start">
-                <img alt="Institute logo" class="mx-auto md:mr-4 mb-2 md:mb-0" height="50" src="{{ url_for('static', filename='images/vishnu-logo.jpg') }}" width="50"/>
+                <img alt="Institute logo" class="mx-auto md:mr-4 mb-2 md:mb-0" height="50" src="/static/images/vishnu-logo.jpg" width="50"/>
                 <div class="flex flex-col items-center md:items-start w-full">
                     <h1 class="text-2xl font-bold">Vishnu Institute Of Technology</h1>
                     <h2>Bhimavaram, West Godavari District</h2>
@@ -139,6 +136,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Publications(journals) by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="Registernumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchJournals()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Publications(journals) Details</h2>
                         <button onclick="exportJournalsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -174,6 +178,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Publications(Conference) by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="registernumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchConference()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Publications(Conference) Details</h2>
                         <button onclick="exportConferenceExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -208,6 +219,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REgisternumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchWorkshops()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Workshop/Seminar/Guest Lecture Details</h2>
                         <button onclick="exportWorkshopsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -238,6 +256,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Achievements by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGIsternumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchAchievements()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Achievements Details</h2>
                         <button onclick="exportAchievementsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -266,6 +291,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Industry Visits by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGISternumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchIndustrialVisits()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Industrial Details</h2>
                         <button onclick="exportIndustriesExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -295,6 +327,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Vedic Workshops by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGISTernumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchVedic()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Vedic Workshop Details</h2>
                         <button onclick="exportVedicExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -323,6 +362,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Outside competitions by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGISTErnumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchCompetitions()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Outside competitions Attended Details</h2>
                         <button onclick="exportCompetitionsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -352,6 +398,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Sports Participation by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGISTERnumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchSports()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Sport Participation Details</h2>
                         <button onclick="exportSportsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -386,6 +439,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search Certifications by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGISTERNumber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchCertifications()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Certifications Details</h2>
                         <button onclick="exportCertificationsExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -416,6 +476,13 @@
                 <div class="container mx-auto p-6">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h2 class="text-xl font-bold mb-4">Search NPTEL/other Online courses by Register Number</h2>
+                        <div class="flex space-x-4">
+                            <input type="text" id="REGISTERNUmber" placeholder="Enter Register Number" class="flex-1 p-2 border border-gray-300 rounded-md">
+                            <button onclick="fetchNptel()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Search</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">NPTEL/other Online courses Details</h2>
                         <button onclick="exportNptelExcel()" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 mb-4">Export Excel</button>
                         <div class="overflow-x-auto">
                             <table class="excel-like-table">
@@ -446,7 +513,6 @@
     </div>
 
     <script>
-
         function formatDateOnly(dateStr) {
             if (!dateStr) return 'N/A';
             const d = new Date(dateStr);
@@ -592,6 +658,7 @@
             XLSX.writeFile(wb, 'nptel-online-courses.xlsx');
         }
 
+
         async function fetchPatents() {
             const loading = document.getElementById('loading');
             const patentsList = document.getElementById('patents-list');
@@ -645,7 +712,7 @@
         async function fetchJournals() {
             const loading = document.getElementById('loading');
             const journalsList = document.getElementById('journals-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('Registernumber').value;
     
             loading.classList.remove('hidden');
     
@@ -685,7 +752,12 @@
         async function fetchConference() {
             const loading = document.getElementById('loading');
             const conferenceList = document.getElementById('conference-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('registernumber').value.trim();
+            
+            if (!registerNumber) {
+                alert("Please enter a Register Number!");
+                return;
+            }
         
             loading.classList.remove('hidden');
         
@@ -732,7 +804,12 @@
         async function fetchWorkshops() {
             const loading = document.getElementById('loading');
             const wsList = document.getElementById('ws-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REgisternumber').value.trim();
+        
+            if (!registerNumber) {
+                alert("Please enter a Register Number!");
+                return;
+            }
         
             loading.classList.remove('hidden');
         
@@ -775,7 +852,7 @@
         async function fetchAchievements() {
             const loading = document.getElementById('loading');
             const achievementsList = document.getElementById('achievements-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGIsternumber').value;
     
             loading.classList.remove('hidden');
     
@@ -808,7 +885,7 @@
         async function fetchIndustrialVisits() {
             const loading = document.getElementById('loading');
             const industriesList = document.getElementById('industries-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGISternumber').value;
     
             loading.classList.remove('hidden');
     
@@ -842,7 +919,7 @@
         async function fetchVedic() {
             const loading = document.getElementById('loading');
             const vedicList = document.getElementById('vedic-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGISTernumber').value;
     
             loading.classList.remove('hidden');
     
@@ -875,7 +952,7 @@
         async function fetchCompetitions() {
             const loading = document.getElementById('loading');
             const competitionsList = document.getElementById('competitions-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGISTErnumber').value;
     
             loading.classList.remove('hidden');
     
@@ -909,7 +986,7 @@
         async function fetchSports() {
             const loading = document.getElementById('loading');
             const sportsList = document.getElementById('sports-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGISTERnumber').value;
     
             loading.classList.remove('hidden');
     
@@ -930,8 +1007,8 @@
                         <td>${sport.game_details || 'N/A'}</td>
                         <td>${sport.organized_by || 'N/A'}</td>
                         <td>${sport.venue || 'N/A'}</td>
-                        <td>${formatDateOnly(sport.event_start_date) || 'N/A'}</td>
-                        <td>${formatDateOnly(sport.event_end_date) || 'N/A'}</td>
+                        <td>${sport.event_start_date || 'N/A'}</td>
+                        <td>${sport.event_end_date || 'N/A'}</td>
                         <td>${sport.secured_position || 'N/A'}</td>
                         <td>${sport.level || 'N/A'}</td>
                     `;
@@ -948,7 +1025,7 @@
         async function fetchCertifications() {
             const loading = document.getElementById('loading');
             const certificationsList = document.getElementById('certifications-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGISTERNumber').value;
     
             loading.classList.remove('hidden');
     
@@ -987,7 +1064,7 @@
         async function fetchNptel() {
             const loading = document.getElementById('loading');
             const nptelList = document.getElementById('nptel-list');
-            const registerNumber = loggedInRegisterNumber;
+            const registerNumber = document.getElementById('REGISTERNUmber').value;
     
             loading.classList.remove('hidden');
     
