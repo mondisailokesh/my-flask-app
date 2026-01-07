@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, abort, make_response
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
@@ -7,22 +7,204 @@ import os
 from mysql.connector import pooling
 from werkzeug.utils import secure_filename
 import json
+import bcrypt
+import secrets
 
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+
+# Determine a stable secret key. Prefer environment variable in production.
+secret = os.environ.get('FLASK_SECRET_KEY')
+if not secret:
+    secret_file = os.path.join(app.root_path, '.flask_secret')
+    try:
+        if os.path.exists(secret_file):
+            with open(secret_file, 'r') as f:
+                secret = f.read().strip()
+        else:
+            secret = secrets.token_hex(32)
+            with open(secret_file, 'w') as f:
+                f.write(secret)
+            try:
+                os.chmod(secret_file, 0o600)
+            except Exception:
+                pass
+    except Exception:
+        secret = 'change_this_to_a_random_secret'
+
+app.secret_key = secret
+
+# Session cookie security settings
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=(os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('1', 'true', 'yes')),
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=2),
+)
+
+
+# Global guard: require login for all non-public routes. This centralizes
+# access control so internal API and template routes can't be reached by
+# copying a URL unless the user is authenticated.
+@app.before_request
+def require_login_for_protected():
+    # Allow static files, health checks, and OPTIONS
+    path = request.path or ''
+    if request.method == 'OPTIONS':
+        return None
+    if path.startswith('/static/') or path.startswith('/uploads/'):
+        # uploads route is protected elsewhere; allow static assets
+        return None
+
+    # Public pages (home and top-level informational pages)
+    public_prefixes = ('/page2-', '/page3-')
+    public_paths = {
+        '/', '/page1',
+        '/login', '/dept-login', '/faculty-login', '/studentclubs-login', '/startups-login', '/hods-login',
+    }
+
+    # Allow any prefixed public page (page2-*, page3-*)
+    if path in public_paths or any(path.startswith(p) for p in public_prefixes):
+        return None
+
+    # Allow static endpoint and favicon
+    if path.startswith('/favicon.ico'):
+        return None
+
+    # Allow API endpoints used by the login pages to POST credentials
+    if path in ('/login', '/dept-login', '/faculty-login', '/studentclubs-login', '/startups-login', '/hods-login'):
+        return None
+
+    # If session not logged in, redirect to home (login page)
+    if not session.get('logged_in'):
+        return redirect(url_for('home'))
+
+    return None
 
 DB_CONFIG = {
-    'host': 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
-    'user': '2tJ2hbMoj1vsu2d.root',
-    'password': 'sYvHNm8s96kZnXQN',
-    'database': 'newproject',
+    'host': os.environ.get('DB_HOST', 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com'),
+    'user': os.environ.get('DB_USER', '2tJ2hbMoj1vsu2d.root'),
+    'password': os.environ.get('DB_PASSWORD', 'sYvHNm8s96kZnXQN'),
+    'database': os.environ.get('DB_NAME', 'newproject'),
 }
 
 pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **DB_CONFIG)
 
 def get_db_connection():
     return pool.get_connection()
+
+# --- Authentication Helpers (defined before any route decorators) ---
+def hash_password(password: str) -> str:
+    """Hash a password using bcrypt and return a utf-8 string."""
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+
+def check_password(password: str, hashed: str) -> bool:
+    """Verify a plaintext password against a bcrypt hash."""
+    try:
+        return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    except Exception:
+        return False
+
+
+from functools import wraps
+
+def login_required(roles=None):
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if not session.get('logged_in') or not session.get('user_id'):
+                flash('Please login to access this page', 'warning')
+                return redirect(url_for('home'))
+            if roles:
+                user_role = session.get('user_role')
+                if user_role not in roles:
+                    abort(403)
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out', 'info')
+    return redirect(url_for('home'))
+
+
+def login_user(table, success_page, role_name):
+    """Authenticate a user from `table`. On success set a secure session.
+
+    This expects the database to store bcrypt-hashed passwords. If a plaintext
+    password is found (legacy), it will be migrated to a bcrypt hash on successful login.
+    """
+    userid = request.form.get('userid')
+    password = request.form.get('password')
+    if not userid or not password:
+        flash('Missing username or password', 'danger')
+        return redirect(url_for('home'))
+
+    conn = create_connection()
+    if conn is None:
+        flash('Unable to connect to database', 'danger')
+        return redirect(url_for('home'))
+
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # Get user record (do not include password check in SQL so we can verify hashes)
+        query = f"SELECT * FROM {table} WHERE user_id = %s"
+        cursor.execute(query, (userid,))
+        user = cursor.fetchone()
+        if not user:
+            flash('Invalid credentials', 'danger')
+            return redirect(url_for('home'))
+
+        stored_password = user.get('password', '')
+        password_ok = False
+
+        # If stored password appears to be a bcrypt hash, verify against it
+        if stored_password.startswith('$2'):
+            password_ok = check_password(password, stored_password)
+        else:
+            # Legacy plaintext comparison
+            password_ok = (password == stored_password)
+            # If plaintext matched, migrate to bcrypt
+            if password_ok:
+                try:
+                    new_hashed = hash_password(password)
+                    upd = f"UPDATE {table} SET password = %s WHERE user_id = %s"
+                    cursor.execute(upd, (new_hashed, userid))
+                    conn.commit()
+                except Exception:
+                    # Migration failure shouldn't block login
+                    conn.rollback()
+
+        if not password_ok:
+            flash('Invalid credentials', 'danger')
+            return redirect(url_for('home'))
+
+        # Successful login: prevent session fixation by clearing session first
+        session.clear()
+        session.permanent = True
+        session['logged_in'] = True
+        session['user_id'] = userid
+        session['user_role'] = role_name
+        session.modified = True
+
+        # Return redirect response (Flask will set session cookie)
+        resp = make_response(redirect(url_for(success_page)))
+        return resp
+
+    except Error as e:
+        flash(f'Database error: {e}', 'danger')
+        return redirect(url_for('home'))
+    finally:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        conn.close()
+# (authentication helpers moved earlier in the file)
 # --- First app routes ---
 
 @app.route('/')
@@ -56,48 +238,58 @@ def page2_6():
 # --- Second app routes ---
 
 @app.route('/page3-1')
+@login_required()
 def page3_1():
     return render_template('page3-1.html')
 
 @app.route('/page3-2')
+@login_required()
 def page3_2():
     return render_template('page3-2.html')
 
 @app.route('/page3-3')
+@login_required()
 def page3_3():
     return render_template('page3-3.html')
 
 # --- Third app routes ---
 
 @app.route('/page4-1')
+@login_required()
 def page4_1():
     return render_template('page4-1.html')
 
 @app.route('/page4-2')
+@login_required()
 def page4_2():
     return render_template('page4-2.html')
 
 @app.route('/page4-3')
+@login_required()
 def page4_3():
     return render_template('page4-3.html')
 
 # --- fourth app routes ---
 
 @app.route('/page5-1')
+@login_required()
 def page5_1():
     return render_template('page5-1.html')
 
 @app.route('/page5-2')
+@login_required()
 def page5_2():
     return render_template('page5-2.html')
 
 @app.route('/page5-3')
+@login_required()
 def page5_3():
     return render_template('page5-3.html')
 
 # --- fifth app routes ---
 
 @app.route('/page6-1')
+@login_required()
 def page6_1():
     return render_template('page6-1.html')
 
@@ -119,8 +311,9 @@ def import_students():
                 if cursor.fetchone():
                     results['skipped'].append(user_id)
                     continue
-                # Insert new student with default password 'AIML'
-                cursor.execute("INSERT INTO login1 (user_id, password) VALUES (%s, %s)", (user_id, 'AIML'))
+                # Insert new student with default password 'AIML' (store hashed)
+                default_hashed = hash_password('AIML')
+                cursor.execute("INSERT INTO login1 (user_id, password) VALUES (%s, %s)", (user_id, default_hashed))
                 results['inserted'].append(user_id)
             except Exception as e:
                 results['errors'].append({'user_id': user_id, 'error': str(e)})
@@ -134,34 +327,41 @@ def import_students():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/page6-2')
+@login_required()
 def page6_2():
     return render_template('page6-2.html')
 
 @app.route('/page6-3')
+@login_required()
 def page6_3():
     return render_template('page6-3.html')
 
 # --- sixth app routes ---
 
 @app.route('/page7-1')
+@login_required()
 def page7_1():
     return render_template('page7-1.html')
 
 @app.route('/page7-2')
+@login_required()
 def page7_2():
     return render_template('page7-2.html')
 
 @app.route('/page7-3')
+@login_required()
 def page7_3():
     return render_template('page7-3.html')
 
 # --- seventh app routes ---
 
 @app.route('/page8-2')
+@login_required()
 def page8_2():
     return render_template('page8-2.html')
 
 @app.route('/page8-3')
+@login_required()
 def page8_3():
     return render_template('page8-3.html')
 
@@ -175,93 +375,95 @@ def create_connection():
         print(f"Error: {e}")
         return None
     
-# --- Authentication Routes ---
-def login_user(table, success_page):
-    userid = request.form['userid']
-    password = request.form['password']
-    conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor(dictionary=True)
-            query = f"SELECT * FROM {table} WHERE user_id = %s AND password = %s"
-            cursor.execute(query, (userid, password))
-            user = cursor.fetchone()
-            if user:
-                session['user_id'] = userid  # Set the session variable for logged-in user
-                return redirect(url_for(success_page))
-            else:
-                return "Invalid Credentials", 401
-        except Error as e:
-            return f"Database Error: {e}", 500
-        finally:
-            cursor.close()
-            conn.close()
-    else:
-        return "Unable to connect to database", 500
+ 
 
 @app.route('/login', methods=['POST'])
 def login():
-    return login_user('login1', 'page4')
+    return login_user('login1', 'page4', 'student')
 
 @app.route('/dept-login', methods=['POST'])
 def dept_login():
-    return login_user('dept', 'page4_dept')
+    return login_user('dept', 'page4_dept', 'dept')
 
 @app.route('/faculty-login', methods=['POST'])
 def faculty_login():
-    return login_user('faculty', 'page4_faculty')
+    return login_user('faculty', 'page4_faculty', 'faculty')
 
 @app.route('/studentclubs-login', methods=['POST'])
 def studentclubs_login():
-    return login_user('studentclubs', 'page4_studentclubs')
+    return login_user('studentclubs', 'page4_studentclubs', 'studentclubs')
 
 @app.route('/startups-login', methods=['POST'])
 def startups_login():
-    return login_user('startups', 'page4_startups')
+    return login_user('startups', 'page4_startups', 'startups')
 
 @app.route('/hods-login', methods=['POST'])
 def hods_login():
-    return login_user('hods', 'page4_hods')
+    return login_user('hods', 'page4_hods', 'hods')
 
 # --- Page Rendering Routes ---
 @app.route('/page4')
+@login_required()
 def page4():
     return render_template('page25-3.html')
 
 @app.route('/page4-dept')
+@login_required()
 def page4_dept():
     return render_template('page25-1.html')
 
 @app.route('/page4-faculty')
+@login_required()
 def page4_faculty():
     return render_template('page25-2.html')
 
 @app.route('/page4-studentclubs')
+@login_required()
 def page4_studentclubs():
     return render_template('page25-4.html')
 
 @app.route('/page4-startups')
+@login_required()
 def page4_startups():
     return render_template('page25-5.html')
 
 @app.route('/page4-hods')
+@login_required()
 def page4_hods():
     return render_template('page25-6.html')
 
 @app.route('/hods/faculty-profile')
+@login_required()
 def hods_faculty_profile():
     return render_template('page25-6-faculty-profile.html')
 
 @app.route('/hods/student-profile')
+@login_required()
 def hods_student_profile():
     return render_template('page25-6-student-profile.html')
 
 @app.route('/hods/department-profile')
+@login_required()
 def hods_department_profile():
     return render_template('page25-6-department-profile.html')
 
+@app.route('/hods/page-profile1')
+@login_required()
+def hods_page_profile1():
+    return render_template('faculty.html')
+
+@app.route('/hods/page-profile2')
+@login_required()
+def hods_page_profile2():
+    return render_template('student.html')
+
 def get_db_connection():
-    return mysql.connector.connect(**DB_CONFIG)
+    # Use connection pool for consistent connection handling
+    try:
+        return pool.get_connection()
+    except Exception:
+        # Fallback to direct connection if pool is unavailable
+        return mysql.connector.connect(**DB_CONFIG)
 
 @app.route('/get_startups', methods=['GET'])
 def get_startups():
@@ -312,32 +514,47 @@ def submit1():
         return redirect(url_for('page4_startups'))
     
 @app.route('/login2', methods=['POST'])
+@login_required()
 def login2():
-    userid = request.form['userid']
-    oldpassword = request.form['oldpassword']
-    newpassword = request.form['newpassword']
+    userid = request.form.get('userid')
+    oldpassword = request.form.get('oldpassword')
+    newpassword = request.form.get('newpassword')
+
+    if session.get('user_id') != userid:
+        return "Forbidden", 403
 
     conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            # Update password if old password matches
-            query = "UPDATE startups SET password = %s WHERE user_id = %s AND password = %s"
-            cursor.execute(query, (newpassword, userid, oldpassword))
-            conn.commit()  # Commit the transaction
-
-            if cursor.rowcount > 0:
-                return "Password changed successfully", 200
-            else:
-                return "Invalid credentials or no changes made", 401
-
-        except Error as e:
-            return f"Database Error: {e}", 500
-        finally:
-            cursor.close()
-            conn.close()
-    else:
+    if conn is None:
         return "Unable to connect to database", 500
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT password FROM startups WHERE user_id = %s", (userid,))
+        row = cursor.fetchone()
+        if not row:
+            return "User not found", 404
+        stored = row.get('password', '')
+        valid = False
+        if stored.startswith('$2'):
+            valid = check_password(oldpassword, stored)
+        else:
+            valid = (oldpassword == stored)
+
+        if not valid:
+            return "Invalid credentials", 401
+
+        new_hashed = hash_password(newpassword)
+        cursor2 = conn.cursor()
+        cursor2.execute("UPDATE startups SET password = %s WHERE user_id = %s", (new_hashed, userid))
+        conn.commit()
+        return "Password changed successfully", 200
+    except Error as e:
+        return f"Database Error: {e}", 500
+    finally:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        conn.close()
     
 @app.route('/submit2', methods=['POST'])
 def submit2():
@@ -409,88 +626,133 @@ def get_events():
     return jsonify({'error': 'Failed to connect to database'}), 500
 
 @app.route('/login4', methods=['POST'])
+@login_required()
 def login4():
-    userid = request.form['userid']
-    oldpassword = request.form['oldpassword']
-    newpassword = request.form['newpassword']
+    userid = request.form.get('userid')
+    oldpassword = request.form.get('oldpassword')
+    newpassword = request.form.get('newpassword')
+
+    if session.get('user_id') != userid:
+        return "Forbidden", 403
 
     conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            # Update password if old password matches
-            query = "UPDATE studentclubs SET password = %s WHERE user_id = %s AND password = %s"
-            cursor.execute(query, (newpassword, userid, oldpassword))
-            conn.commit()  # Commit the transaction
-
-            if cursor.rowcount > 0:
-                return "Password changed successfully", 200
-            else:
-                return "Invalid credentials or no changes made", 401
-
-        except Error as e:
-            return f"Database Error: {e}", 500
-        finally:
-            cursor.close()
-            conn.close()
-    else:
+    if conn is None:
         return "Unable to connect to database", 500
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT password FROM studentclubs WHERE user_id = %s", (userid,))
+        row = cursor.fetchone()
+        if not row:
+            return "User not found", 404
+        stored = row.get('password', '')
+        valid = False
+        if stored.startswith('$2'):
+            valid = check_password(oldpassword, stored)
+        else:
+            valid = (oldpassword == stored)
+
+        if not valid:
+            return "Invalid credentials", 401
+
+        new_hashed = hash_password(newpassword)
+        cursor2 = conn.cursor()
+        cursor2.execute("UPDATE studentclubs SET password = %s WHERE user_id = %s", (new_hashed, userid))
+        conn.commit()
+        return "Password changed successfully", 200
+    except Error as e:
+        return f"Database Error: {e}", 500
+    finally:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        conn.close()
 
 @app.route('/login3', methods=['POST'])
+@login_required()
 def login3():
-    userid = request.form['userid']
-    oldpassword = request.form['oldpassword']
-    newpassword = request.form['newpassword']
+    userid = request.form.get('userid')
+    oldpassword = request.form.get('oldpassword')
+    newpassword = request.form.get('newpassword')
+
+    if session.get('user_id') != userid:
+        return "Forbidden", 403
 
     conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            # Update password if old password matches
-            query = "UPDATE hods SET password = %s WHERE user_id = %s AND password = %s"
-            cursor.execute(query, (newpassword, userid, oldpassword))
-            conn.commit()  # Commit the transaction
-
-            if cursor.rowcount > 0:
-                return "Password changed successfully", 200
-            else:
-                return "Invalid credentials or no changes made", 401
-
-        except Error as e:
-            return f"Database Error: {e}", 500
-        finally:
-            cursor.close()
-            conn.close()
-    else:
+    if conn is None:
         return "Unable to connect to database", 500
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT password FROM hods WHERE user_id = %s", (userid,))
+        row = cursor.fetchone()
+        if not row:
+            return "User not found", 404
+        stored = row.get('password', '')
+        valid = False
+        if stored.startswith('$2'):
+            valid = check_password(oldpassword, stored)
+        else:
+            valid = (oldpassword == stored)
+
+        if not valid:
+            return "Invalid credentials", 401
+
+        new_hashed = hash_password(newpassword)
+        cursor2 = conn.cursor()
+        cursor2.execute("UPDATE hods SET password = %s WHERE user_id = %s", (new_hashed, userid))
+        conn.commit()
+        return "Password changed successfully", 200
+    except Error as e:
+        return f"Database Error: {e}", 500
+    finally:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        conn.close()
 
 @app.route('/login5', methods=['POST'])
+@login_required()
 def login5():
-    userid = request.form['userid']
-    oldpassword = request.form['oldpassword']
-    newpassword = request.form['newpassword']
+    userid = request.form.get('userid')
+    oldpassword = request.form.get('oldpassword')
+    newpassword = request.form.get('newpassword')
+
+    if session.get('user_id') != userid:
+        return "Forbidden", 403
 
     conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            # Update password if old password matches
-            query = "UPDATE login1 SET password = %s WHERE user_id = %s AND password = %s"
-            cursor.execute(query, (newpassword, userid, oldpassword))
-            conn.commit()  # Commit the transaction
-
-            if cursor.rowcount > 0:
-                return "Password changed successfully", 200
-            else:
-                return "Invalid credentials or no changes made", 401
-
-        except Error as e:
-            return f"Database Error: {e}", 500
-        finally:
-            cursor.close()
-            conn.close()
-    else:
+    if conn is None:
         return "Unable to connect to database", 500
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT password FROM login1 WHERE user_id = %s", (userid,))
+        row = cursor.fetchone()
+        if not row:
+            return "User not found", 404
+        stored = row.get('password', '')
+        valid = False
+        if stored.startswith('$2'):
+            valid = check_password(oldpassword, stored)
+        else:
+            valid = (oldpassword == stored)
+
+        if not valid:
+            return "Invalid credentials", 401
+
+        new_hashed = hash_password(newpassword)
+        cursor2 = conn.cursor()
+        cursor2.execute("UPDATE login1 SET password = %s WHERE user_id = %s", (new_hashed, userid))
+        conn.commit()
+        return "Password changed successfully", 200
+    except Error as e:
+        return f"Database Error: {e}", 500
+    finally:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        conn.close()
     
 @app.route('/get_patents', methods=['GET'])
 def get_patents():
@@ -1221,32 +1483,47 @@ def submit_nptel_courses():
         return redirect(url_for('page4'))
     
 @app.route('/login6', methods=['POST'])
+@login_required()
 def login6():
-    userid = request.form['userid']
-    oldpassword = request.form['oldpassword']
-    newpassword = request.form['newpassword']
+    userid = request.form.get('userid')
+    oldpassword = request.form.get('oldpassword')
+    newpassword = request.form.get('newpassword')
+
+    if session.get('user_id') != userid:
+        return "Forbidden", 403
 
     conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            # Update password if old password matches
-            query = "UPDATE faculty SET password = %s WHERE user_id = %s AND password = %s"
-            cursor.execute(query, (newpassword, userid, oldpassword))
-            conn.commit()  # Commit the transaction
-
-            if cursor.rowcount > 0:
-                return "Password changed successfully", 200
-            else:
-                return "Invalid credentials or no changes made", 401
-
-        except Error as e:
-            return f"Database Error: {e}", 500
-        finally:
-            cursor.close()
-            conn.close()
-    else:
+    if conn is None:
         return "Unable to connect to database", 500
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT password FROM faculty WHERE user_id = %s", (userid,))
+        row = cursor.fetchone()
+        if not row:
+            return "User not found", 404
+        stored = row.get('password', '')
+        valid = False
+        if stored.startswith('$2'):
+            valid = check_password(oldpassword, stored)
+        else:
+            valid = (oldpassword == stored)
+
+        if not valid:
+            return "Invalid credentials", 401
+
+        new_hashed = hash_password(newpassword)
+        cursor2 = conn.cursor()
+        cursor2.execute("UPDATE faculty SET password = %s WHERE user_id = %s", (new_hashed, userid))
+        conn.commit()
+        return "Password changed successfully", 200
+    except Error as e:
+        return f"Database Error: {e}", 500
+    finally:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        conn.close()
     
 @app.route('/get_faculty_patents', methods=['GET'])
 def get_faculty_patents():
@@ -4427,10 +4704,12 @@ def submit_fest():
     return redirect(url_for('page4_dept'))
     
 @app.route('/uploads/<path:filename>')
+@login_required()
 def download_file(filename):
     return send_from_directory('uploads', filename)
 
 @app.route('/hods/add_user', methods=['GET', 'POST'])
+@login_required()
 def add_user_hods():
     if request.method == 'POST':
         user_type = request.form.get('user_type')
@@ -4460,13 +4739,16 @@ def add_user_hods():
                 if not faculty_name or not department:
                     flash('Faculty Name and Department are required for faculty users.', 'danger')
                     return redirect(url_for('add_user_hods'))
+                # Hash password before storing
+                hashed_pwd = hash_password(password)
                 # Insert into faculty first
-                cursor.execute("INSERT INTO faculty (user_id, password) VALUES (%s, %s)", (user_id, password))
+                cursor.execute("INSERT INTO faculty (user_id, password) VALUES (%s, %s)", (user_id, hashed_pwd))
                 # Then insert into faculty_details
                 cursor.execute("INSERT INTO faculty_details (user_id, faculty_name, department) VALUES (%s, %s, %s)", (user_id, faculty_name, department))
             else:
-                # For other user types
-                cursor.execute(f"INSERT INTO {table} (user_id, password) VALUES (%s, %s)", (user_id, password))
+                # For other user types - hash password before insert
+                hashed_pwd = hash_password(password)
+                cursor.execute(f"INSERT INTO {table} (user_id, password) VALUES (%s, %s)", (user_id, hashed_pwd))
 
             conn.commit()
             flash('User added successfully!', 'success')
@@ -4490,6 +4772,7 @@ def add_user_hods():
     return render_template('add_user.html')
 
 @app.route('/hods/remove_user', methods=['GET', 'POST'])
+@login_required()
 def remove_user_hods():
     removed_users = []
     user_type_view = request.args.get('user_type_view')
@@ -4532,6 +4815,12 @@ def remove_user_hods():
             else:
                 extra_details = user_data.copy()
                 password = extra_details.pop('password', None)
+                # Do not store plaintext passwords in the removed_users archive.
+                # Only preserve bcrypt hashes; otherwise store NULL to avoid keeping plaintext credentials.
+                if password and isinstance(password, str) and password.startswith('$2'):
+                    password_to_store = password
+                else:
+                    password_to_store = None
                 extra_details.pop('user_id', None)
                 # If faculty, also fetch faculty_details and add relieving_date
                 if user_type == 'faculty':
@@ -4544,7 +4833,7 @@ def remove_user_hods():
                 import json, datetime
                 cursor.execute(
                     "INSERT INTO removed_users (user_type, user_id, password, removed_at, extra_details) VALUES (%s, %s, %s, %s, %s)",
-                    (user_type, user_id, password, datetime.datetime.now(), json.dumps(extra_details))
+                    (user_type, user_id, password_to_store, datetime.datetime.now(), json.dumps(extra_details))
                 )
                 # Explicitly delete from faculty_details before deleting from faculty
                 if user_type == 'faculty':
@@ -6406,5 +6695,142 @@ def get_faculty_name():
     conn.close()
     return jsonify({'faculty_name': result['faculty_name'] if result else ''})
 
+# --- HODs Manage Users ---
+@app.route('/manage_users_hods', methods=['GET'])
+@login_required()
+def manage_users_hods():
+    user_type_filter = request.args.get('user_type')
+    user_id_filter = request.args.get('user_id')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    user_tables = [
+        ('faculty', 'faculty'),
+        ('dept', 'dept'),
+        ('studentclubs', 'studentclubs'),
+        ('startups', 'startups'),
+        ('login1', 'students'),  # Use login1 for students
+        ('hods', 'hods'),
+    ]
+    users = []
+    for table, user_type in user_tables:
+        if user_type_filter and user_type != user_type_filter:
+            continue
+        if user_type == 'faculty':
+            query = """
+                SELECT f.user_id, f.password, fd.faculty_name, fd.department
+                FROM faculty f
+                LEFT JOIN faculty_details fd ON f.user_id = fd.user_id
+            """
+            params = []
+            if user_id_filter:
+                query += " WHERE f.user_id = %s"
+                params.append(user_id_filter)
+            try:
+                cursor.execute(query, params)
+                for row in cursor.fetchall():
+                    users.append({
+                        'user_id': row['user_id'],
+                        'user_type': user_type,
+                        'password': row['password'],
+                        'faculty_name': row.get('faculty_name'),
+                        'department': row.get('department'),
+                    })
+            except Exception:
+                pass
+        else:
+            query = f"SELECT user_id, password FROM {table}"
+            params = []
+            if user_id_filter:
+                query += " WHERE user_id = %s"
+                params.append(user_id_filter)
+            try:
+                cursor.execute(query, params)
+                for row in cursor.fetchall():
+                    users.append({
+                        'user_id': row['user_id'],
+                        'user_type': user_type,
+                        'password': row['password']
+                    })
+            except Exception:
+                pass  # skip tables that don't exist or error
+    cursor.close()
+    conn.close()
+    return render_template('manage_users.html', users=users, user_type_filter=user_type_filter, user_id_filter=user_id_filter)
+
+@app.route('/update_user_hods', methods=['POST'])
+@login_required()
+def update_user_hods():
+        user_id = request.form.get('user_id')
+        user_type = request.form.get('user_type')
+        password = request.form.get('password')
+        table_map = {
+            'faculty': 'faculty',
+            'dept': 'dept',
+            'studentclubs': 'studentclubs',
+            'startups': 'startups',
+            'students': 'login1',  # Use login1 for students
+            'hods': 'hods',
+        }
+        table = table_map.get(user_type)
+        if not table:
+            flash('Invalid user type selected.', 'danger')
+            return redirect(url_for('manage_users_hods'))
+
+        conn = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            if user_type == 'faculty':
+                faculty_name = request.form.get('faculty_name')
+                department = request.form.get('department')
+                # Update faculty table
+                cursor.execute("UPDATE faculty SET password=%s WHERE user_id=%s", (password, user_id))
+                # Update faculty_details table (only faculty_name and department)
+                cursor.execute("UPDATE faculty_details SET faculty_name=%s, department=%s WHERE user_id=%s", (faculty_name, department, user_id))
+            else:
+                cursor.execute(f"UPDATE {table} SET password=%s WHERE user_id=%s", (password, user_id))
+
+            conn.commit()
+            flash('User updated successfully!', 'success')
+        except mysql.connector.Error as e:
+            if conn:
+                conn.rollback()
+            flash(f'Error updating user: {str(e)}', 'danger')
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            flash(f'An unexpected error occurred: {str(e)}', 'danger')
+        finally:
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+            if conn and conn.is_connected():
+                conn.close()
+        return redirect(url_for('manage_users_hods'))
+
 if __name__ == '__main__':
+    # At startup, ensure sensitive endpoints are explicitly protected.
+    # This wraps view functions for routes that match common data/action
+    # prefixes so they are guarded by `login_required()` even if a
+    # developer forgets to add the decorator manually.
+    def _auto_protect_routes():
+        protect_prefixes = ('/get_', '/submit_', '/import_', '/update_', '/manage_', '/uploads', '/hods/', '/submit_faculty', '/submit_')
+        # Small allowlist for endpoints we don't want to wrap
+        allow_endpoints = set(['static'])
+        for rule in list(app.url_map.iter_rules()):
+            # Skip static and non-HTTP rules
+            if rule.endpoint in allow_endpoints:
+                continue
+            path = rule.rule or ''
+            # Skip login endpoints and public prefixes
+            if path in ('/',) or path.startswith('/page2-') or path.startswith('/page3-'):
+                continue
+            if any(path.startswith(p) for p in protect_prefixes):
+                endpoint = rule.endpoint
+                view_func = app.view_functions.get(endpoint)
+                if view_func and not getattr(view_func, '_login_protected', False):
+                    app.view_functions[endpoint] = login_required()(view_func)
+                    # mark wrapped so we don't double-wrap
+                    app.view_functions[endpoint]._login_protected = True
+
+    _auto_protect_routes()
     app.run(debug=True)
